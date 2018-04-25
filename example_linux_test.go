@@ -30,7 +30,7 @@ func Example() {
 	// Create a filter.
 	filter := seccomp.Filter{
 		NoNewPrivs: true,
-		Flag:       seccomp.FilterFlagTSync, // TSYNC requires Linux 3.17+.
+		Flag:       seccomp.FilterFlagTSync,
 		Policy: seccomp.Policy{
 			DefaultAction: seccomp.ActionAllow,
 			Syscalls: []seccomp.SyscallGroup{
