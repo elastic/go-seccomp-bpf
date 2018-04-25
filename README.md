@@ -43,7 +43,7 @@ program is generated based on a filter policy created by you.
 
 ###### Examples
 
-- [GoDoc Package Example](https://godoc.org/github.com/elastic/go-seccomp-bpf/#example_)
+- [GoDoc Package Example](https://godoc.org/github.com/elastic/go-seccomp-bpf#example-package)
 - `sandbox` example in [cmd/sandbox](./cmd/sandbox).
 
 ###### Projects Using elastic/go-seccomp-bpf
