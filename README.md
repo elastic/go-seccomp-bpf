@@ -20,26 +20,34 @@ program is generated based on a filter policy created by you.
 
 ###### Requirements
 
-- Requires Linux 3.17 because it uses `SECCOMP_FILTER_FLAG_TSYNC` in order to
-  sync the filter to all threads created by the Go runtime.
+- Requires Linux 3.17 because it uses the `seccomp` syscall in order to take
+  advantage of the `SECCOMP_FILTER_FLAG_TSYNC` flag to sync the filter to all
+  threads.
 
 ###### Features
 
 - Pure Go and does not have a libseccomp dependency.
 - Filters are customizable and can be written a whitelist or blacklist.
+- Uses `SECCOMP_FILTER_FLAG_TSYNC` to sync the filter to all threads created by
+  the Go runtime.
+- Invokes `prctl(PR_SET_NO_NEW_PRIVS, 1)` to set the threads `no_new_privs` bit
+  which is generally required before loading a seccomp filter.
 
 ###### Limitations
 
 - System call argument filtering is not implemented. (Pull requests are
-  welcomed.)
+  welcomed. See #1.)
 - System call tables are only implemented for 386, amd64, and arm.
   (More system call table generation code should be added to
   [arch/mk_syscalls_linux.go](./arch/mk_syscalls_linux.go).)
 
-###### Example
+###### Examples
 
-See the `sandbox` example in [cmd/sandbox](./cmd/sandbox).
+- [GoDoc Package Example](https://godoc.org/github.com/elastic/go-seccomp-bpf/#example_)
+- `sandbox` example in [cmd/sandbox](./cmd/sandbox).
 
-###### Projects using elastic/go-seccomp-bpf
+###### Projects Using elastic/go-seccomp-bpf
+
+Please open a PR to submit your project.
 
 - [elastic/beats](https://www.github.com/elastic/beats)
