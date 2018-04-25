@@ -1,0 +1,20 @@
+sudo: false
+
+language: go
+
+os:
+- linux
+
+go:
+- 1.10.x
+
+go_import_path: github.com/elastic/go-seccomp-bpf
+
+before_install:
+- go get -u github.com/elastic/go-licenser
+
+script:
+- go-licenser -d
+- go run .ci/scripts/check_format.go
+- go get -d -t ./...
+- go test -v ./...
