@@ -29,7 +29,7 @@ import (
 // SetNoNewPrivs will use prctl to set the calling thread's no_new_privs bit to
 // 1 (true). Once set, this bit cannot be unset.
 func SetNoNewPrivs() error {
-	return prctl(unix.PR_SET_NO_NEW_PRIVS, 1)
+	return prctl(prSetNoNewPrivs, 1)
 }
 
 // LoadFilter will install seccomp using native methods.

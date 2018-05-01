@@ -26,6 +26,10 @@ package seccomp
 // #include <stdlib.h>
 import "C"
 
+// prSetNoNewPrivs defines the prctl flag to set the calling thread's
+// no_new_privs bit.
+const prSetNoNewPrivs = C.PR_SET_NO_NEW_PRIVS
+
 // Valid operations for seccomp syscall.
 // https://github.com/torvalds/linux/blob/v4.16/include/uapi/linux/seccomp.h#L14-L17
 const (

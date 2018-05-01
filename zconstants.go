@@ -20,6 +20,8 @@
 
 package seccomp
 
+const prSetNoNewPrivs = 0x26
+
 const (
 	seccompSetModeFilter = 0x1
 )
