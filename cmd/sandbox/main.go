@@ -81,10 +81,14 @@ func parsePolicy() (*seccomp.Policy, error) {
 		return nil, err
 	}
 
-	var policy seccomp.Policy
-	if err = conf.Unpack(&policy); err != nil {
+	type Config struct {
+		Seccomp seccomp.Policy
+	}
+
+	var config Config
+	if err = conf.Unpack(&config); err != nil {
 		return nil, err
 	}
 
-	return &policy, nil
+	return &config.Seccomp, nil
 }

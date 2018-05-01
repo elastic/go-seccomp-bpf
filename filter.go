@@ -115,8 +115,8 @@ type Filter struct {
 
 // Policy defines the BPF seccomp filter.
 type Policy struct {
-	DefaultAction Action         `config:"default_action" validate:"required" json:"default_action"` // Action when no syscalls match.
-	Syscalls      []SyscallGroup `config:"syscalls"       validate:"required" json:"syscalls"`       // Groups of syscalls and actions.
+	DefaultAction Action         `config:"default_action" validate:"required" json:"default_action" yaml:"default_action"` // Action when no syscalls match.
+	Syscalls      []SyscallGroup `config:"syscalls"       validate:"required" json:"syscalls"       yaml:"syscalls"`       // Groups of syscalls and actions.
 
 	arch *arch.Info
 }
@@ -124,8 +124,8 @@ type Policy struct {
 // SyscallGroup is a logical block within a Policy that contains a set of
 // syscalls to match against and an action to take.
 type SyscallGroup struct {
-	Names  []string `config:"names"  validate:"required" json:"names"`  // List of syscall names (all must exist).
-	Action Action   `config:"action" validate:"required" json:"action"` // Action to take upon a match.
+	Names  []string `config:"names"  validate:"required" json:"names"  yaml:"names"`  // List of syscall names (all must exist).
+	Action Action   `config:"action" validate:"required" json:"action" yaml:"action"` // Action to take upon a match.
 
 	arch *arch.Info
 }

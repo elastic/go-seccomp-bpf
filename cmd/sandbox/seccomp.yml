@@ -1,19 +1,20 @@
 # This is an example seccomp policy for x86_64 that prevents network syscalls.
 
-# Possible actions:
-# - kill_process (since Linux 4.14)
-# - kill_thread
-# - trap
-# - errno (returns EPERM)
-# - trace
-# - log (since Linux 4.14)
-# - allow
+seccomp:
+  # The default action is applied if none of the syscalls match.
+  #
+  # Possible actions:
+  # - kill_process (since Linux 4.14)
+  # - kill_thread
+  # - trap
+  # - errno (returns EPERM)
+  # - trace
+  # - log (since Linux 4.14)
+  # - allow
+  default_action: allow
 
-# The default action is applied if none of the syscalls match.
-default_action: allow
-
-# Network sandbox example.
-syscalls:
+  syscalls:
+  # Network sandbox example.
   - action: errno
     names:
     - connect
