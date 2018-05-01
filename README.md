@@ -32,6 +32,8 @@ program is generated based on a filter policy created by you.
   the Go runtime.
 - Invokes `prctl(PR_SET_NO_NEW_PRIVS, 1)` to set the threads `no_new_privs` bit
   which is generally required before loading a seccomp filter.
+- [seccomp-profiler](./cmd/seccomp-profiler) tool for automatically generating
+  a whitelist policy based on the system calls that a binary uses.
 
 ###### Limitations
 
