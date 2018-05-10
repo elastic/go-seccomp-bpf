@@ -22,9 +22,10 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 )
 
-const localPkgs = "github.com/elastic/go-seccomp-bpf"
+const localPkg = "github.com/elastic/go-seccomp-bpf"
 
 var defaultPaths = []string{"."}
 
@@ -42,14 +43,14 @@ func main() {
 		os.Exit(1)
 	}
 
-	args := append([]string{"-l", "-local", localPkgs}, paths...)
+	args := append([]string{"-l", "-local", localPkg}, paths...)
 	out, err = exec.Command("goimports", args...).Output()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "error", err.(*exec.ExitError))
 		os.Exit(1)
 	}
 	if len(out) > 0 {
-		fmt.Fprintln(os.Stderr, "Run goimports on the code.")
+		fmt.Fprintf(os.Stderr, "Run goimports -w -l -local %v %v on the code.\n", localPkg, strings.Join(paths, " "))
 		fmt.Printf(string(out))
 		os.Exit(1)
 	}
