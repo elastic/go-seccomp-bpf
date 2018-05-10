@@ -6,3 +6,4 @@
 _obj
 
 cmd/sandbox/sandbox
+cmd/seccomp-profiler/seccomp-profiler
