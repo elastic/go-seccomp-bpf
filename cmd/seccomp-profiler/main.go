@@ -64,6 +64,7 @@ var (
 	templateFile string
 	packageName  string
 	blacklist    stringSlice
+	allowList    stringSlice
 	outFile      string
 )
 
@@ -73,6 +74,7 @@ func init() {
 	flag.StringVar(&packageName, "pkg", "main", "package name to use in source code")
 	flag.BoolVar(&debug, "d", false, "add debug to the config output")
 	flag.Var(&blacklist, "b", "blacklist syscalls by name")
+	flag.Var(&allowList, "allow", "allow syscalls by name (always include them in the profile)")
 	flag.StringVar(&outFile, "out", "-", "output filename")
 }
 
@@ -117,14 +119,19 @@ func main() {
 	for _, s := range m {
 		names = append(names, s.Name)
 	}
-	sort.Strings(names)
-	names = filterBlacklist(names)
 
 	log.Printf("Found %d total syscalls", len(syscalls))
 	log.Printf("Found %d unique syscalls", len(m))
 	if len(blacklist) > 0 {
+		names = filterBlacklist(names)
 		log.Printf("Filtered %d blacklisted syscalls", len(m)-len(names))
 	}
+	if len(allowList) > 0 {
+		size := len(names)
+		names = addWhitelist(archInfo, names)
+		log.Printf("Added %d allowed syscalls", len(names)-size)
+	}
+	sort.Strings(names)
 
 	// Open the output.
 	f, err := openOutput(goarch)
@@ -176,6 +183,7 @@ func getBinaryArch(binary string) (*arch.Info, string, error) {
 	}
 	if len(libs) > 0 {
 		log.Println("Binary is dynamically linked with", strings.Join(libs, ", "))
+		log.Println("WARN: The profiler cannot detect syscalls used in linked libraries.")
 	}
 
 	switch bin.Machine {
@@ -282,6 +290,25 @@ func filterBlacklist(syscalls []string) []string {
 		if _, found := filter[s]; !found {
 			out = append(out, s)
 		}
+	}
+	return out
+}
+
+func addWhitelist(archInfo *arch.Info, syscalls []string) []string {
+	m := make(map[string]struct{}, len(syscalls))
+	for _, s := range syscalls {
+		m[s] = struct{}{}
+	}
+
+	for _, s := range allowList {
+		if _, found := archInfo.SyscallNames[s]; found {
+			m[s] = struct{}{}
+		}
+	}
+
+	out := make([]string, 0, len(m))
+	for s, _ := range m {
+		out = append(out, s)
 	}
 	return out
 }
