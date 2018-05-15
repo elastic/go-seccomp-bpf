@@ -50,6 +50,8 @@ type SeccompTest struct {
 }
 
 func simulateSyscalls(t testing.TB, policy *Policy, tests []SeccompTest) {
+	t.Helper()
+
 	filter, err := policy.Assemble()
 	if err != nil {
 		t.Fatal(err)
@@ -110,6 +112,12 @@ func TestPolicyAssembleBlacklist(t *testing.T) {
 		{
 			SeccompData{NR: 4, Arch: uint32(arch.ARM.ID)},
 			ActionAllow,
+		},
+		{
+			// Attempts to bypass the filter by using X32 syscalls on X86_64
+			// are met with ENOSYS.
+			SeccompData{NR: int32(arch.X32.SyscallNames["execve"] + arch.X32.SeccompMask), Arch: uint32(arch.X86_64.ID)},
+			ActionErrno | Action(errnoENOSYS),
 		},
 	})
 }

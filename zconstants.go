@@ -38,7 +38,10 @@ const (
 	ActionAllow       Action = 0x7fff0000
 )
 
-const errnoEPERM = 0x1
+const (
+	errnoEPERM  = 0x1
+	errnoENOSYS = 0x26
+)
 
 const (
 	FilterFlagTSync FilterFlag = 0x1
