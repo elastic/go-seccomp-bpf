@@ -123,13 +123,15 @@ func main() {
 	log.Printf("Found %d total syscalls", len(syscalls))
 	log.Printf("Found %d unique syscalls", len(m))
 	if len(blacklist) > 0 {
-		names = filterBlacklist(names)
-		log.Printf("Filtered %d blacklisted syscalls", len(m)-len(names))
+		var filtered []string
+		names, filtered = filterBlacklist(names)
+		log.Printf("Filtered %d blacklisted syscalls (%v)", len(m)-len(names), strings.Join(filtered, ", "))
 	}
 	if len(allowList) > 0 {
 		size := len(names)
-		names = addWhitelist(archInfo, names)
-		log.Printf("Added %d allowed syscalls", len(names)-size)
+		var added []string
+		names, added = addWhitelist(archInfo, names)
+		log.Printf("Added %d allowed syscalls (%v)", len(names)-size, strings.Join(added, ", "))
 	}
 	sort.Strings(names)
 
@@ -279,30 +281,38 @@ func doObjdump(binary, hash string) (string, error) {
 	return dumpFile, nil
 }
 
-func filterBlacklist(syscalls []string) []string {
+func filterBlacklist(syscalls []string) ([]string, []string) {
 	filter := make(map[string]struct{}, len(blacklist))
 	for _, s := range blacklist {
 		filter[s] = struct{}{}
 	}
 
 	var out []string
+	var filtered []string
 	for _, s := range syscalls {
 		if _, found := filter[s]; !found {
 			out = append(out, s)
+		} else {
+			filtered = append(filtered, s)
 		}
 	}
-	return out
+	return out, filtered
 }
 
-func addWhitelist(archInfo *arch.Info, syscalls []string) []string {
+func addWhitelist(archInfo *arch.Info, syscalls []string) ([]string, []string) {
 	m := make(map[string]struct{}, len(syscalls))
 	for _, s := range syscalls {
 		m[s] = struct{}{}
 	}
 
+	var added []string
 	for _, s := range allowList {
 		if _, found := archInfo.SyscallNames[s]; found {
-			m[s] = struct{}{}
+			_, found := m[s]
+			if !found {
+				m[s] = struct{}{}
+				added = append(added, s)
+			}
 		}
 	}
 
@@ -310,7 +320,7 @@ func addWhitelist(archInfo *arch.Info, syscalls []string) []string {
 	for s, _ := range m {
 		out = append(out, s)
 	}
-	return out
+	return out, added
 }
 
 func openOutput(goarch string) (io.WriteCloser, error) {
