@@ -57,7 +57,10 @@ const (
 	ActionAllow       Action = C.SECCOMP_RET_ALLOW        // Allow.
 )
 
-const errnoEPERM = C.EPERM
+const (
+	errnoEPERM  = C.EPERM
+	errnoENOSYS = C.ENOSYS
+)
 
 // List of SECCOMP_SET_MODE_FILTER values.
 // https://github.com/torvalds/linux/blob/v4.16/include/uapi/linux/seccomp.h#L19-L21
