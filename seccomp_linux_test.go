@@ -34,6 +34,10 @@ import (
 )
 
 func TestLoadFilter(t *testing.T) {
+	if !Supported() {
+		t.Skip("seccomp not supported by kernel")
+	}
+
 	var policy Policy
 
 	switch runtime.GOARCH {
