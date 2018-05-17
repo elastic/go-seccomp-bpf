@@ -33,6 +33,11 @@ const prSetNoNewPrivs = C.PR_SET_NO_NEW_PRIVS
 // Valid operations for seccomp syscall.
 // https://github.com/torvalds/linux/blob/v4.16/include/uapi/linux/seccomp.h#L14-L17
 const (
+	// Seccomp filter mode where only system calls that the calling thread is
+	// permitted to make are read(2), write(2), _exit(2) (but not
+	// exit_group(2)), and sigreturn(2). Flags must be 0.
+	seccompSetModeStrict = C.SECCOMP_SET_MODE_STRICT
+
 	// Seccomp filter mode where a BPF filter defines what system calls are
 	// allowed.
 	seccompSetModeFilter = C.SECCOMP_SET_MODE_FILTER
