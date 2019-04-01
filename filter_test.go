@@ -21,6 +21,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"flag"
+	"fmt"
 	"os"
 	"testing"
 
@@ -156,6 +157,63 @@ func TestPolicyAssembleWhitelist(t *testing.T) {
 			ActionKillProcess,
 		},
 	})
+}
+
+func TestPolicyAssembleLongList(t *testing.T) {
+	for c := 1; c <= len(arch.X86_64.SyscallNumbers); c++ {
+		c := c
+
+		t.Run(fmt.Sprintf("size=%d", c), func(t *testing.T) {
+			t.Parallel()
+
+			var list []string
+			var tests []SeccompTest
+
+			i := 0
+
+			for nr, name := range arch.X86_64.SyscallNumbers {
+
+				if i == c {
+					break
+				}
+				i++
+
+				var action Action
+				if name != "exit" {
+					list = append(list, name)
+					action = ActionAllow
+				} else {
+					action = ActionKillProcess
+				}
+
+				tests = append(tests, SeccompTest{
+					SeccompData{NR: int32(nr), Arch: uint32(arch.X86_64.ID)},
+					action,
+				})
+				tests = append(tests, SeccompTest{
+					SeccompData{NR: int32(nr), Arch: uint32(arch.ARM.ID)},
+					ActionKillProcess,
+				})
+			}
+
+			policy := &Policy{
+				arch:          arch.X86_64,
+				DefaultAction: ActionKillProcess,
+				Syscalls: []SyscallGroup{
+					{
+						Names:  list,
+						Action: ActionAllow,
+					},
+				},
+			}
+
+			if *dump {
+				policy.Dump(os.Stdout)
+			}
+
+			simulateSyscalls(t, policy, tests)
+		})
+	}
 }
 
 func TestPolicyAssembleDefault(t *testing.T) {
