@@ -23,7 +23,7 @@ package seccomp_test
 import (
 	"fmt"
 
-	"github.com/elastic/go-seccomp-bpf"
+	seccomp "github.com/elastic/go-seccomp-bpf"
 )
 
 func Example() {

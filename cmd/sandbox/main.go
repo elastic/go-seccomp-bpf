@@ -25,7 +25,7 @@ import (
 
 	"github.com/elastic/go-ucfg/yaml"
 
-	"github.com/elastic/go-seccomp-bpf"
+	seccomp "github.com/elastic/go-seccomp-bpf"
 )
 
 var (
