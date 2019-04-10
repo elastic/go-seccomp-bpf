@@ -161,7 +161,6 @@ func TestPolicyAssembleWhitelist(t *testing.T) {
 }
 
 func TestPolicyAssembleLongList(t *testing.T) {
-
 	// Sort syscall numbers to make manual review of filters with -dump easier.
 	syscallNumbers := make([]int, 0, len(arch.X86_64.SyscallNumbers))
 	for nr := range arch.X86_64.SyscallNumbers {
