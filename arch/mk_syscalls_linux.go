@@ -346,8 +346,8 @@ var (
 )
 
 func init() {
-	flag.StringVar(&outputFile, "-out", "zsyscalls.go", "output file")
-	flag.StringVar(&linuxVersion, "-version", "v4.16", "linux version (git tag)")
+	flag.StringVar(&outputFile, "out", "zsyscalls.go", "output file")
+	flag.StringVar(&linuxVersion, "version", "v5.0", "linux version (git tag)")
 }
 
 func main() {
