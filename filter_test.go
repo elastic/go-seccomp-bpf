@@ -21,7 +21,9 @@ import (
 	"bytes"
 	"encoding/binary"
 	"flag"
+	"fmt"
 	"os"
+	"sort"
 	"testing"
 
 	"golang.org/x/net/bpf"
@@ -156,6 +158,64 @@ func TestPolicyAssembleWhitelist(t *testing.T) {
 			ActionKillProcess,
 		},
 	})
+}
+
+func TestPolicyAssembleLongList(t *testing.T) {
+	// Sort syscall numbers to make manual review of filters with -dump easier.
+	syscallNumbers := make([]int, 0, len(arch.X86_64.SyscallNumbers))
+	for nr := range arch.X86_64.SyscallNumbers {
+		syscallNumbers = append(syscallNumbers, nr)
+	}
+	sort.Ints(syscallNumbers)
+
+	for i := 1; i <= len(syscallNumbers); i++ {
+		filterSize := i
+
+		t.Run(fmt.Sprintf("size=%d", filterSize), func(t *testing.T) {
+			var syscallNames []string
+			var tests []SeccompTest
+
+			for _, nr := range syscallNumbers[:filterSize] {
+				name := arch.X86_64.SyscallNumbers[nr]
+
+				var action Action
+				if name != "exit" {
+					syscallNames = append(syscallNames, name)
+					action = ActionAllow
+				} else {
+					action = ActionKillProcess
+				}
+
+				tests = append(tests, SeccompTest{
+					SeccompData{NR: int32(nr), Arch: uint32(arch.X86_64.ID)},
+					action,
+				})
+
+				// Incorrect arch should always kill process.
+				tests = append(tests, SeccompTest{
+					SeccompData{NR: int32(nr), Arch: uint32(arch.ARM.ID)},
+					ActionKillProcess,
+				})
+			}
+
+			policy := &Policy{
+				arch:          arch.X86_64,
+				DefaultAction: ActionKillProcess,
+				Syscalls: []SyscallGroup{
+					{
+						Names:  syscallNames,
+						Action: ActionAllow,
+					},
+				},
+			}
+
+			if *dump {
+				policy.Dump(os.Stdout)
+			}
+
+			simulateSyscalls(t, policy, tests)
+		})
+	}
 }
 
 func TestPolicyAssembleDefault(t *testing.T) {
