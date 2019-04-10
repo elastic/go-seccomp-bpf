@@ -23,6 +23,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"sort"
 	"testing"
 
 	"golang.org/x/net/bpf"
@@ -160,27 +161,27 @@ func TestPolicyAssembleWhitelist(t *testing.T) {
 }
 
 func TestPolicyAssembleLongList(t *testing.T) {
-	for c := 1; c <= len(arch.X86_64.SyscallNumbers); c++ {
-		c := c
 
-		t.Run(fmt.Sprintf("size=%d", c), func(t *testing.T) {
-			t.Parallel()
+	// Sort syscall numbers to make manual review of filters with -dump easier.
+	syscallNumbers := make([]int, 0, len(arch.X86_64.SyscallNumbers))
+	for nr := range arch.X86_64.SyscallNumbers {
+		syscallNumbers = append(syscallNumbers, nr)
+	}
+	sort.Ints(syscallNumbers)
 
-			var list []string
+	for i := 1; i <= len(syscallNumbers); i++ {
+		filterSize := i
+
+		t.Run(fmt.Sprintf("size=%d", filterSize), func(t *testing.T) {
+			var syscallNames []string
 			var tests []SeccompTest
 
-			i := 0
-
-			for nr, name := range arch.X86_64.SyscallNumbers {
-
-				if i == c {
-					break
-				}
-				i++
+			for _, nr := range syscallNumbers[:filterSize] {
+				name := arch.X86_64.SyscallNumbers[nr]
 
 				var action Action
 				if name != "exit" {
-					list = append(list, name)
+					syscallNames = append(syscallNames, name)
 					action = ActionAllow
 				} else {
 					action = ActionKillProcess
@@ -190,6 +191,8 @@ func TestPolicyAssembleLongList(t *testing.T) {
 					SeccompData{NR: int32(nr), Arch: uint32(arch.X86_64.ID)},
 					action,
 				})
+
+				// Incorrect arch should always kill process.
 				tests = append(tests, SeccompTest{
 					SeccompData{NR: int32(nr), Arch: uint32(arch.ARM.ID)},
 					ActionKillProcess,
@@ -201,7 +204,7 @@ func TestPolicyAssembleLongList(t *testing.T) {
 				DefaultAction: ActionKillProcess,
 				Syscalls: []SyscallGroup{
 					{
-						Names:  list,
+						Names:  syscallNames,
 						Action: ActionAllow,
 					},
 				},
