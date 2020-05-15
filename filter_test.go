@@ -137,6 +137,10 @@ func TestPolicyAssembleWhitelist(t *testing.T) {
 				Names:  []string{"clone", "listen"},
 				Action: ActionAllow,
 			},
+			{
+				Names:  []string{"unlink"},
+				Action: ActionErrno.WithReturnData(22),
+			},
 		},
 	}
 
@@ -156,6 +160,10 @@ func TestPolicyAssembleWhitelist(t *testing.T) {
 		{
 			SeccompData{NR: 4, Arch: uint32(arch.ARM.ID)},
 			ActionKillProcess,
+		},
+		{
+			SeccompData{NR: 87, Arch: uint32(arch.X86_64.ID)},
+			ActionErrno.WithReturnData(22),
 		},
 	})
 }

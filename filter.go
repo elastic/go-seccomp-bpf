@@ -31,6 +31,9 @@ import (
 const (
 	syscallNumOffset = 0
 	archOffset       = 4
+
+	seccompRetActionFull = 0xffff0000 // SECCOMP_RET_ACTION_FULL
+	seccompRetData       = 0x0000ffff // SECCOMP_RET_DATA
 )
 
 // FilterFlag is a flag that is passed to the seccomp. Multiple flags can be
@@ -93,7 +96,7 @@ func (a *Action) Unpack(s string) error {
 
 // String returns a string representation of the Action.
 func (a Action) String() string {
-	name, found := actionNames[a]
+	name, found := actionNames[a&seccompRetActionFull]
 	if found {
 		return name
 	}
@@ -103,6 +106,15 @@ func (a Action) String() string {
 // MarshalText marshals the value to text.
 func (a Action) MarshalText() ([]byte, error) {
 	return []byte(a.String()), nil
+}
+
+// WithReturnData adds a return data to the action.
+func (a Action) WithReturnData(code int) Action {
+	act := a & seccompRetActionFull
+	if act == ActionTrap || act == ActionErrno || act == ActionTrace {
+		return act | Action(code&seccompRetData)
+	}
+	return a
 }
 
 // Filter contains all the parameters necessary to install a Linux seccomp
@@ -133,7 +145,7 @@ type SyscallGroup struct {
 // Validate validates that the configuration has both a default action and a
 // set of syscalls.
 func (p *Policy) Validate() error {
-	if _, found := actionNames[p.DefaultAction]; !found {
+	if _, found := actionNames[p.DefaultAction&seccompRetActionFull]; !found {
 		return errors.Errorf("invalid default_action value %d", p.DefaultAction)
 	}
 
