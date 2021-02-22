@@ -1,9 +1,12 @@
 # go-seccomp-bpf
 
-[![Build Status](http://img.shields.io/travis/elastic/go-seccomp-bpf.svg?style=flat-square)][travis]
+[![Build Status](https://beats-ci.elastic.co/job/Library/job/go-seccomp-bpf-mbp/job/master/badge/icon)](https://beats-ci.elastic.co/job/Library/job/go-seccomp-bpf-mbp/job/master/)
+[![Go Report
+Card](https://goreportcard.com/badge/github.com/elastic/go-seccomp-bpf)](https://goreportcard.com/report/github.com/elastic/go-seccomp-bpf)
+[![Contributors](https://img.shields.io/github/contributors/elastic/go-seccomp-bpf.svg)](https://github.com/elastic/go-seccomp-bpf/graphs/contributors)
+[![GitHub release](https://img.shields.io/github/release/elastic/go-seccomp-bpf.svg?label=changelog)](https://github.com/elastic/go-seccomp-bpf/releases/latest)
 [![Go Documentation](http://img.shields.io/badge/go-documentation-blue.svg?style=flat-square)][godocs]
 
-[travis]:   http://travis-ci.org/elastic/go-seccomp-bpf
 [godocs]:   http://godoc.org/github.com/elastic/go-seccomp-bpf
 
 go-seccomp-bpf is a library for Go (golang) for loading a system call filter on
