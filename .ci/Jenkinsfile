@@ -37,7 +37,7 @@ pipeline {
         withGithubNotify(context: "Verify") {
           deleteDir()
           unstash 'source'
-          withGoEnv(version: "${GO_VERSION}", pkgs: ['github.com/elastic/go-licenser']){
+          withGoEnv(pkgs: ['github.com/elastic/go-licenser']){
             dir("${BASE_DIR}"){
               sh(label: 'Go build', script: 'go mod verify')
               sh(label: 'Go build', script: 'go-licenser -d')
