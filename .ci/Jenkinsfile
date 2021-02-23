@@ -50,6 +50,7 @@ pipeline {
     stage('Test') {
       failFast false
       matrix {
+        agent { label "${PLATFORM}" }
         options { skipDefaultCheckout() }
         axes {
           axis {
