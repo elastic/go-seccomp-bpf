@@ -42,6 +42,12 @@ var (
 		SyscallNumbers: syscallsARM,
 		SyscallNames:   invert(syscallsARM),
 	}
+	AARCH64 = &Info{
+		Name:           "aarch64",
+		ID:             auditArchAARCH64,
+		SyscallNumbers: syscallsAARCH64,
+		SyscallNames:   invert(syscallsAARCH64),
+	}
 	I386 = &Info{
 		Name:           "i386",
 		ID:             auditArchI386,
@@ -66,10 +72,6 @@ var (
 
 	// The following architectures are not fully implemented. Syscall tables
 	// need to be added for them (syscall number -> name mapping).
-	AARCH64 = &Info{
-		Name: "aarch64",
-		ID:   auditArchAARCH64,
-	}
 	PPC = &Info{
 		Name: "ppc",
 		ID:   auditArchPPC,
