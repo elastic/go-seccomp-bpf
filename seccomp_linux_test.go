@@ -16,7 +16,7 @@
 // under the License.
 
 // +build linux
-// +build 386 arm amd64
+// +build 386 arm amd64 arm64
 
 package seccomp
 
@@ -44,6 +44,20 @@ func TestLoadFilter(t *testing.T) {
 	default:
 		t.Skip("arch not implemented")
 	case "arm":
+		policy = Policy{
+			DefaultAction: ActionAllow,
+			Syscalls: []SyscallGroup{
+				{
+					Action: ActionErrno,
+					Names: []string{
+						"bind",
+						"listen",
+						"execve",
+					},
+				},
+			},
+		}
+	case "arm64":
 		policy = Policy{
 			DefaultAction: ActionAllow,
 			Syscalls: []SyscallGroup{

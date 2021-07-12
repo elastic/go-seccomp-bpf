@@ -42,7 +42,7 @@ program is generated based on a filter policy created by you.
 
 - System call argument filtering is not implemented. (Pull requests are
   welcomed. See #1.)
-- System call tables are only implemented for 386, amd64, and arm.
+- System call tables are only implemented for 386, amd64, arm and arm64.
   (More system call table generation code should be added to
   [arch/mk_syscalls_linux.go](./arch/mk_syscalls_linux.go).)
 
