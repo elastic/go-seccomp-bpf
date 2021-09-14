@@ -15,6 +15,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
+//go:build ignore
 // +build ignore
 
 package main
@@ -393,7 +394,7 @@ var (
 
 func init() {
 	flag.StringVar(&outputFile, "out", "zsyscalls.go", "output file")
-	flag.StringVar(&linuxVersion, "version", "v5.0", "linux version (git tag)")
+	flag.StringVar(&linuxVersion, "version", "v5.14", "linux version (git tag)")
 }
 
 func main() {
