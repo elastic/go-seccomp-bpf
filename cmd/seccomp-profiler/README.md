@@ -1,10 +1,10 @@
 # seccomp-profiler
 
 seccomp-profiler reads Go binaries compiled for Linux (amd64 and 386 only) to
-determine what system calls it uses. Then it generates a whitelist seccomp
+determine what system calls it uses. Then it generates an allowlist seccomp
 profile for the binary.
 
-It can output the whitelist as either Go code or YAML (by using `-format=code`
+It can output the allowlist as either Go code or YAML (by using `-format=code`
 or `-format=config`).
 
 ## Usage
@@ -25,7 +25,7 @@ $ seccomp-profiler metricbeat > seccomp_linux_amd64.go
 2018/05/01 11:49:58 Found 93 unique syscalls
 ```
 
-This will write seccomp policy that whitelists the system calls found in the
+This will write a seccomp policy that allows the system calls found in the
 binary's object code.
 
 ```go

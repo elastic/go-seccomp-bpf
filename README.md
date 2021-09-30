@@ -30,13 +30,13 @@ program is generated based on a filter policy created by you.
 ###### Features
 
 - Pure Go and does not have a libseccomp dependency.
-- Filters are customizable and can be written a whitelist or blacklist.
+- Filters are customizable and can be written as an allowlist or blocklist.
 - Uses `SECCOMP_FILTER_FLAG_TSYNC` to sync the filter to all threads created by
   the Go runtime.
 - Invokes `prctl(PR_SET_NO_NEW_PRIVS, 1)` to set the threads `no_new_privs` bit
   which is generally required before loading a seccomp filter.
 - [seccomp-profiler](./cmd/seccomp-profiler) tool for automatically generating
-  a whitelist policy based on the system calls that a binary uses.
+  a allowlist policy based on the system calls that a binary uses.
 
 ###### Limitations
 
