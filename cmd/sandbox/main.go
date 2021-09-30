@@ -30,12 +30,12 @@ import (
 
 var (
 	policyFile string
-	allowNewPrivs bool
+	noNewPrivs bool
 )
 
 func main() {
 	flag.StringVar(&policyFile, "policy", "seccomp.yml", "seccomp policy file")
-	flag.BoolVar(&allowNewPrivs, "allow-new-privs", false, "do not set no new privs bit")
+	flag.BoolVar(&noNewPrivs, "no-new-privs", true, "set no new privs bit")
 	flag.Parse()
 
 	args := flag.Args()
@@ -53,7 +53,7 @@ func main() {
 
 	// Create a filter based on config.
 	filter := seccomp.Filter{
-		NoNewPrivs: !allowNewPrivs,
+		NoNewPrivs: noNewPrivs,
 		Flag:       seccomp.FilterFlagTSync,
 		Policy:     *policy,
 	}
