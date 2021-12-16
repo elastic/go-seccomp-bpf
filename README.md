@@ -1,6 +1,6 @@
 # go-seccomp-bpf
 
-[![Build Status](https://beats-ci.elastic.co/job/Library/job/go-seccomp-bpf-mbp/job/master/badge/icon)](https://beats-ci.elastic.co/job/Library/job/go-seccomp-bpf-mbp/job/master/)
+[![Build Status](https://beats-ci.elastic.co/job/Library/job/go-seccomp-bpf-mbp/job/main/badge/icon)](https://beats-ci.elastic.co/job/Library/job/go-seccomp-bpf-mbp/job/main/)
 [![Go Report
 Card](https://goreportcard.com/badge/github.com/elastic/go-seccomp-bpf)](https://goreportcard.com/report/github.com/elastic/go-seccomp-bpf)
 [![Contributors](https://img.shields.io/github/contributors/elastic/go-seccomp-bpf.svg)](https://github.com/elastic/go-seccomp-bpf/graphs/contributors)
