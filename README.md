@@ -50,6 +50,16 @@ program is generated based on a filter policy created by you.
 
 - [GoDoc Package Example](https://godoc.org/github.com/elastic/go-seccomp-bpf#example-package)
 - `sandbox` example in [cmd/sandbox](./cmd/sandbox).
+ 
+###### Updating syscalls for new Linux releases
+
+This package contains a list of syscall numbers that are generated from the
+Linux sources. Update the git tag [here](https://github.com/elastic/go-seccomp-bpf/blob/b57d796185ac9f05fc0483554da79c4bbaedcc97/arch/mk_syscalls_linux.go)
+and then run this command to generate the code.
+
+```shell
+docker run -it --rm -v `pwd`:/go-seccomp-bpf -w /go-seccomp-bpf/arch golang:1.18 go generate
+```
 
 ###### Projects Using elastic/go-seccomp-bpf
 
