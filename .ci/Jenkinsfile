@@ -42,7 +42,7 @@ pipeline {
             dir("${BASE_DIR}"){
               sh(label: 'go mod verify', script: 'go mod verify')
               sh(label: 'go-licenser', script: 'go-licenser -d')
-              sh(label: 'gofumpt', script: 'scripts/gofumpt.sh')
+              sh(label: 'gofumpt', script: '.ci/scripts/gofumpt.sh')
             }
           }
         }
