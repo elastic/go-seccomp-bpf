@@ -10,9 +10,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Updated go.mod to require Go 1.18. [#20](https://github.com/elastic/go-seccomp-bpf/pull/20)
-- Updated syscall tables for Linux v6.0. [#19](https://github.com/elastic/go-seccomp-bpf/pull/19)
-
 ### Deprecated
 
 ### Removed
@@ -20,6 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [1.3.0] - 2022-11-27
+
+### Changed
+
+- Updated go.mod to require Go 1.18. [#20](https://github.com/elastic/go-seccomp-bpf/pull/20)
+- Updated syscall tables for Linux v6.0. [#19](https://github.com/elastic/go-seccomp-bpf/pull/19)
 
 ## [1.2.0] - 2021-09-15
 
