@@ -19,7 +19,7 @@
 
 package arch
 
-// Based on Linux v5.14.
+// Based on Linux v6.0.
 
 var syscallsARM = map[int]string{
 	0:      "restart_syscall",
@@ -422,6 +422,9 @@ var syscallsARM = map[int]string{
 	444:    "landlock_create_ruleset",
 	445:    "landlock_add_rule",
 	446:    "landlock_restrict_self",
+	448:    "process_mrelease",
+	449:    "futex_waitv",
+	450:    "set_mempolicy_home_node",
 	983041: "breakpoint",
 	983042: "cacheflush",
 	983043: "usr26",
@@ -755,6 +758,9 @@ var syscallsAARCH64 = map[int]string{
 	445: "landlock_add_rule",
 	446: "landlock_restrict_self",
 	447: "memfd_secret",
+	448: "process_mrelease",
+	449: "futex_waitv",
+	450: "set_mempolicy_home_node",
 }
 
 var syscalls386 = map[int]string{
@@ -1195,6 +1201,9 @@ var syscalls386 = map[int]string{
 	445: "landlock_add_rule",
 	446: "landlock_restrict_self",
 	447: "memfd_secret",
+	448: "process_mrelease",
+	449: "futex_waitv",
+	450: "set_mempolicy_home_node",
 }
 
 var syscallsX32 = map[int]string{
@@ -1557,6 +1566,9 @@ var syscallsX32 = map[int]string{
 	445: "landlock_add_rule",
 	446: "landlock_restrict_self",
 	447: "memfd_secret",
+	448: "process_mrelease",
+	449: "futex_waitv",
+	450: "set_mempolicy_home_node",
 	512: "rt_sigaction",
 	513: "rt_sigreturn",
 	514: "ioctl",
@@ -1955,4 +1967,7 @@ var syscallsX86_64 = map[int]string{
 	445: "landlock_add_rule",
 	446: "landlock_restrict_self",
 	447: "memfd_secret",
+	448: "process_mrelease",
+	449: "futex_waitv",
+	450: "set_mempolicy_home_node",
 }
