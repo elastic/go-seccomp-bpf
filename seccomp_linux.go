@@ -18,10 +18,10 @@
 package seccomp
 
 import (
+	"fmt"
 	"syscall"
 	"unsafe"
 
-	"github.com/pkg/errors"
 	"golang.org/x/net/bpf"
 	"golang.org/x/sys/unix"
 )
@@ -47,12 +47,12 @@ func SetNoNewPrivs() error {
 func LoadFilter(filter Filter) error {
 	insts, err := filter.Policy.Assemble()
 	if err != nil {
-		return errors.Wrap(err, "failed to assemble policy")
+		return fmt.Errorf("failed to assemble policy: %w", err)
 	}
 
 	raw, err := bpf.Assemble(insts)
 	if err != nil {
-		return errors.Wrap(err, "failed to assemble BPF instructions")
+		return fmt.Errorf("failed to assemble BPF instructions: %w", err)
 	}
 
 	sockFilter := sockFilter(raw)
@@ -63,16 +63,16 @@ func LoadFilter(filter Filter) error {
 
 	if filter.NoNewPrivs {
 		if err = SetNoNewPrivs(); err != nil {
-			return errors.Wrap(err, "failed to set no_new_privs with prctl")
+			return fmt.Errorf("failed to set no_new_privs with prctl: %w", err)
 		}
 	}
 
 	if err = seccomp(seccompSetModeFilter, filter.Flag, unsafe.Pointer(program)); err != nil {
 		if err == syscall.ENOSYS {
-			return errors.Wrap(err, "failed loading seccomp filter: seccomp "+
-				"is not supported by the kernel")
+			return fmt.Errorf("failed loading seccomp filter: seccomp "+
+				"is not supported by the kernel: %w", err)
 		}
-		return errors.Wrap(err, "failed loading seccomp filter")
+		return fmt.Errorf("failed loading seccomp filter: %w", err)
 	}
 
 	return nil

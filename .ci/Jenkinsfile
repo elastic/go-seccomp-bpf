@@ -40,9 +40,9 @@ pipeline {
           unstash 'source'
           withGoEnv(pkgs: ['github.com/elastic/go-licenser']){
             dir("${BASE_DIR}"){
-              sh(label: 'Go build', script: 'go mod verify')
-              sh(label: 'Go build', script: 'go-licenser -d')
-              sh(label: 'Go build', script: 'go run .ci/scripts/check_format.go')
+              sh(label: 'go mod verify', script: 'go mod verify')
+              sh(label: 'go-licenser', script: 'go-licenser -d')
+              sh(label: 'gofumpt', script: '.ci/scripts/gofumpt.sh')
             }
           }
         }
@@ -56,7 +56,7 @@ pipeline {
         axes {
           axis {
             name 'GO_VERSION'
-            values '1.12.17', '1.14.13'
+            values '1.18.8'
           }
           axis {
             name 'PLATFORM'
