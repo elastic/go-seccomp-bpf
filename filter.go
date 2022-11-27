@@ -18,11 +18,11 @@
 package seccomp
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"strings"
 
-	"github.com/pkg/errors"
 	"golang.org/x/net/bpf"
 
 	"github.com/elastic/go-seccomp-bpf/arch"
@@ -88,7 +88,7 @@ func (a *Action) Unpack(s string) error {
 			return nil
 		}
 	}
-	return errors.Errorf("invalid action: %v", s)
+	return fmt.Errorf("invalid action: %v", s)
 }
 
 // String returns a string representation of the Action.
@@ -134,7 +134,7 @@ type SyscallGroup struct {
 // set of syscalls.
 func (p *Policy) Validate() error {
 	if _, found := actionNames[p.DefaultAction]; !found {
-		return errors.Errorf("invalid default_action value %d", p.DefaultAction)
+		return fmt.Errorf("invalid default_action value %d", p.DefaultAction)
 	}
 
 	if len(p.Syscalls) == 0 {
@@ -242,7 +242,7 @@ func (g *SyscallGroup) Assemble() ([]bpf.Instruction, error) {
 		}
 	}
 	if len(unknowns) > 0 {
-		return nil, errors.Errorf("found unknown syscalls for arch %v: %v",
+		return nil, fmt.Errorf("found unknown syscalls for arch %v: %v",
 			g.arch.Name, strings.Join(unknowns, ","))
 	}
 

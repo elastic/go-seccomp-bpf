@@ -18,10 +18,9 @@
 package arch
 
 import (
+	"fmt"
 	"runtime"
 	"strings"
-
-	"github.com/pkg/errors"
 )
 
 // Info contains Linux architecture information (name, audit arch, and syscall
@@ -171,7 +170,7 @@ func GetInfo(name string) (*Info, error) {
 
 	arch, found := arches[name]
 	if !found || len(arch.SyscallNames) == 0 {
-		return nil, errors.Errorf("unsupported arch: %v", name)
+		return nil, fmt.Errorf("unsupported arch: %v", name)
 	}
 	return arch, nil
 }

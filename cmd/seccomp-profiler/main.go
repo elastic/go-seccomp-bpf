@@ -234,7 +234,7 @@ func cachedDumpFile(binary string) (string, error) {
 	}
 
 	dumpDir := filepath.Join(usr.HomeDir, ".seccomp-profiler")
-	if err := os.MkdirAll(dumpDir, 0700); err != nil {
+	if err := os.MkdirAll(dumpDir, 0o700); err != nil {
 		return "", err
 	}
 
@@ -317,7 +317,7 @@ func addWhitelist(archInfo *arch.Info, syscalls []string) ([]string, []string) {
 	}
 
 	out := make([]string, 0, len(m))
-	for s, _ := range m {
+	for s := range m {
 		out = append(out, s)
 	}
 	return out, added
@@ -345,7 +345,7 @@ func openOutput(goarch string) (io.WriteCloser, error) {
 
 	dir := filepath.Dir(outFile)
 	if dir != "" {
-		if err := os.MkdirAll(dir, 0755); err != nil {
+		if err := os.MkdirAll(dir, 0o755); err != nil {
 			return nil, err
 		}
 	}
@@ -358,7 +358,7 @@ func writeDebugYAML(w io.Writer, syscalls []disasm.Syscall) error {
 		return syscalls[i].Name < syscalls[j].Name
 	})
 
-	var debug = struct {
+	debug := struct {
 		AllSyscalls []disasm.Syscall `yaml:"all_syscalls"`
 	}{
 		AllSyscalls: syscalls,
