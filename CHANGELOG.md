@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Update go.mod to use Go 1.18.
+- Update go.mod to require Go 1.18.
 
 ### Deprecated
 
