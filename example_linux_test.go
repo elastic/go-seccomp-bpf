@@ -15,6 +15,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
+//go:build linux && (386 || arm || amd64)
 // +build linux
 // +build 386 arm amd64
 
