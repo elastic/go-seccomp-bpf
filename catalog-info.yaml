@@ -19,7 +19,7 @@ apiVersion: backstage.io/v1alpha1
 kind: Resource
 metadata:
   name: buildkite-pipeline-go-seccomp-bpf
-  description: Buildkite pipeline for the go-seccomp-bpfp roject
+  description: Buildkite pipeline for the go-seccomp-bpfp project
   links:
     - title: Pipeline
       url: https://buildkite.com/elastic/go-seccomp-bpf
