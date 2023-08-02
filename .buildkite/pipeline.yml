@@ -1,5 +1,36 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/buildkite/pipeline-schema/main/schema.json
+env:
+  GO_VERSION: '1.18'
+  GO111MODULE: 'on'
 
+# pipelineManager([ cancelPreviousRunningBuilds: [ when: 'PR' ] ])
 steps:
-  - label: "Example test"
-    command: echo "Hello!"
+  - label: ":buildkite: Verify"
+    command:
+      - ".buildkite/scripts/verify.sh"
+    agents:
+      image: golang:${GO_VERSION}
+      cpu: "8"
+      memory: "4G"
+
+  - label: ":buildkite: Test"
+    key: test
+    command:
+      - ".buildkite/scripts/test.sh"
+    agents:
+      image: golang:${GO_VERSION}
+      cpu: "8"
+      memory: "4G"
+    artifact_paths:
+      - "junit-*.xml"
+
+  - label: ":junit: Junit annotate"
+    plugins:
+      - junit-annotate#v2.4.1:
+          artifacts: "junit-*.xml"
+          fail-build-on-error: true
+    agents:
+      provider: "gcp" #junit plugin requires docker
+    depends_on:
+      - step: "test"
+        allow_failure: true
