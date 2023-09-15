@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Updated syscall tables for Linux v6.5 to add cachestat.
+
 ### Deprecated
 
 ### Removed
