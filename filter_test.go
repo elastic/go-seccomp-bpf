@@ -39,6 +39,10 @@ var dump = flag.Bool("dump", false, "dump seccomp filter instructions to stdout"
 // https://github.com/torvalds/linux/blob/v4.16/kernel/seccomp.c#L73-L74
 var simulatorEndian = binary.BigEndian
 
+func init() {
+	nativeEndian = simulatorEndian
+}
+
 type SeccompData struct {
 	NR                 int32
 	Arch               uint32
@@ -77,9 +81,37 @@ func simulateSyscalls(t testing.TB, policy *Policy, tests []SeccompTest) {
 
 		if Action(rtn) != tc.Rtn {
 			t.Errorf("Expected %v, but got %v for test case %v with seccomp_data=%#v",
-				tc.Rtn, rtn, n+1, tc.Data)
+				tc.Rtn, Action(rtn), n+1, tc.Data)
 		}
 	}
+}
+
+// conditionTests maps the operations to the corresponding Go operations to test the 64-bit operations.
+var conditionTests = []struct {
+	cond Operation
+	eval func(policy, input uint64) bool
+}{
+	{cond: Equal, eval: func(input, policy uint64) bool { return input == policy }},
+	{cond: NotEqual, eval: func(input, policy uint64) bool { return input != policy }},
+	{cond: GreaterThan, eval: func(input, policy uint64) bool { return input > policy }},
+	{cond: GreaterOrEqual, eval: func(input, policy uint64) bool { return input >= policy }},
+	{cond: LessThan, eval: func(input, policy uint64) bool { return input < policy }},
+	{cond: LessOrEqual, eval: func(input, policy uint64) bool { return input <= policy }},
+	{cond: BitsSet, eval: func(input, policy uint64) bool { return input&policy != 0 }},
+	{cond: BitsNotSet, eval: func(input, policy uint64) bool { return input&policy == 0 }},
+}
+
+// conditionInput to test the 64-bit operations.
+var conditionInput = []uint64{
+	0x0000_0000_0000_0000,
+	0x0000_0000_0506_0708,
+	0x0002_0304_0506_0707,
+	0x0102_0304_0000_0000,
+	0x0102_0304_0506_0707,
+	0x0102_0304_0506_0708,
+	0x0102_0304_0506_0709,
+	0x0202_0304_0506_0708,
+	0xFFFF_FFFF_FFFF_FFFF,
 }
 
 func TestPolicyAssembleBlacklist(t *testing.T) {
@@ -241,4 +273,211 @@ func TestPolicyAssembleDefault(t *testing.T) {
 			t.Errorf("failed to assemble default policy on %v: %v", arch.Name, err)
 		}
 	}
+}
+
+func TestSimpleLongList(t *testing.T) {
+
+	syscallNumbers := make([]int, 0, len(arch.X86_64.SyscallNumbers))
+	for nr := range arch.X86_64.SyscallNumbers {
+		syscallNumbers = append(syscallNumbers, nr)
+	}
+	sort.Ints(syscallNumbers)
+
+	names := make([]string, 0)
+	for i := 1; i < 6; i++ {
+		names = append(names, arch.X86_64.SyscallNumbers[i])
+	}
+
+	names = append(names, "read")
+
+	policy := &Policy{
+		arch:          arch.X86_64,
+		DefaultAction: ActionAllow,
+		Syscalls: []SyscallGroup{
+			{
+				Names:  names,
+				Action: ActionKillThread,
+			},
+		},
+	}
+
+	if *dump {
+		policy.Dump(os.Stdout)
+	}
+
+	simulateSyscalls(t, policy, []SeccompTest{
+		{
+			SeccompData{NR: 0, Arch: uint32(arch.X86_64.ID), Args: [6]uint64{0x0000_0006_0000_0007}},
+			ActionKillThread,
+		},
+	})
+}
+
+func TestSimpleConditions(t *testing.T) {
+
+	for _, tc := range conditionTests {
+		t.Run(string(tc.cond), func(t *testing.T) {
+			policy := &Policy{
+				arch:          arch.X86_64,
+				DefaultAction: ActionAllow,
+				Syscalls: []SyscallGroup{
+					{
+						Names:  []string{},
+						Action: ActionKillThread,
+						NamesWithCondtions: []NameWithConditions{
+							{
+								Name: "read",
+								Conditions: []Condition{
+									{
+										Argument:  0,
+										Operation: tc.cond,
+										Value:     0x0102_0304_0506_0708,
+									},
+								},
+							},
+						},
+					},
+				},
+			}
+			if *dump {
+				policy.Dump(os.Stdout)
+			}
+
+			syscalls := make([]SeccompTest, 0)
+
+			for _, i := range conditionInput {
+				expected := ActionAllow
+				if tc.eval(i, 0x0102_0304_0506_0708) {
+					expected = ActionKillThread
+				}
+
+				t := SeccompTest{
+					SeccompData{NR: 0, Arch: uint32(arch.X86_64.ID), Args: [6]uint64{i}},
+					expected,
+				}
+				syscalls = append(syscalls, t)
+			}
+			simulateSyscalls(t, policy, syscalls)
+		})
+	}
+}
+
+func TestTwoArgumentConditions(t *testing.T) {
+	for _, tc := range conditionTests {
+		t.Run(string(tc.cond), func(t *testing.T) {
+			policy := &Policy{
+				arch:          arch.X86_64,
+				DefaultAction: ActionAllow,
+				Syscalls: []SyscallGroup{
+					{
+						Names:  []string{},
+						Action: ActionKillThread,
+						NamesWithCondtions: []NameWithConditions{
+							{
+								Name: "read",
+								Conditions: []Condition{
+									{
+										Argument:  0,
+										Operation: tc.cond,
+										Value:     0x0102_0304_0506_0708,
+									},
+									{
+										Argument:  1,
+										Operation: tc.cond,
+										Value:     0x1020_3040_5060_7080,
+									},
+								},
+							},
+						},
+					},
+				},
+			}
+
+			if *dump {
+				policy.Dump(os.Stdout)
+			}
+
+			syscalls := make([]SeccompTest, 0)
+
+			for _, arg1 := range conditionInput {
+				for _, arg2 := range conditionInput {
+					expected := ActionAllow
+					if tc.eval(arg1, 0x0102_0304_0506_0708) && tc.eval(arg2, 0x1020_3040_5060_7080) {
+						expected = ActionKillThread
+					}
+
+					t := SeccompTest{
+						SeccompData{NR: 0, Arch: uint32(arch.X86_64.ID), Args: [6]uint64{arg1, arg2}},
+						expected,
+					}
+					syscalls = append(syscalls, t)
+				}
+			}
+			simulateSyscalls(t, policy, syscalls)
+		})
+	}
+}
+
+// https://stackoverflow.com/questions/3337896/imitate-emulate-a-big-endian-behavior-in-c
+// https://github.com/seccomp/libseccomp/blob/1852fe3d772914d848907f9d0656747776ed3f98/src/gen_bpf.c#L233
+// https://github.com/seccomp/libseccomp/blob/main/src/arch.c#L287
+
+func TestLongConditions(t *testing.T) {
+
+	filter := make([]NameWithConditions, 0)
+	for i := uint64(0); i < 20; i++ {
+
+		arguments := make([]Condition, 0)
+		for arg := 0; arg < 6; arg++ {
+			argument := Condition{
+				Argument:  arg,
+				Operation: Equal,
+				Value:     i*6 + uint64(arg),
+			}
+			arguments = append(arguments, argument)
+		}
+
+		f := NameWithConditions{
+			Name:       "write",
+			Conditions: arguments,
+		}
+		filter = append(filter, f)
+	}
+
+	policy := &Policy{
+		arch:          arch.X86_64,
+		DefaultAction: ActionAllow,
+		Syscalls: []SyscallGroup{
+			{
+				Names:              []string{},
+				Action:             ActionKillThread,
+				NamesWithCondtions: filter,
+			},
+		},
+	}
+
+	if *dump {
+		policy.Dump(os.Stdout)
+	}
+
+	lastCheck := uint64(len(filter)-1) * 6
+	simulateSyscalls(t, policy, []SeccompTest{
+		{
+			SeccompData{NR: 1, Arch: uint32(arch.X86_64.ID), Args: [6]uint64{0, 1, 2, 3, 4, 5}},
+			ActionKillThread,
+		},
+		{
+			SeccompData{NR: 1, Arch: uint32(arch.X86_64.ID), Args: [6]uint64{lastCheck,
+				lastCheck + 1,
+				lastCheck + 2,
+				lastCheck + 3,
+				lastCheck + 4,
+				lastCheck + 5}},
+			ActionKillThread,
+		},
+		{
+			SeccompData{NR: 1, Arch: uint32(arch.X86_64.ID), Args: [6]uint64{0, 1, 2, 3, 4, 0}},
+			ActionAllow,
+		},
+	})
 }
