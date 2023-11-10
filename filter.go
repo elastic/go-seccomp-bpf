@@ -368,7 +368,7 @@ func (g *SyscallGroup) Assemble(defaultAction Action) ([]bpf.Instruction, error)
 	p.SetLabel(action)
 	p.Ret(g.Action)
 
-	return p.Assemble(), nil
+	return p.Assemble()
 }
 
 func (s SyscallWithConditions) Assemble(p *Program, action Label) {

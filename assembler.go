@@ -19,6 +19,7 @@ package seccomp
 
 import (
 	"encoding/binary"
+	"fmt"
 	"unsafe"
 
 	"golang.org/x/net/bpf"
@@ -141,30 +142,43 @@ func (p *Program) NewLabel() Label {
 
 // Assemble resolves all jump destinations to concrete instructions using the labels.
 // This method takes care of long jumps and resolves them by using early returns or unconditional long jumps.
-func (p *Program) Assemble() []bpf.Instruction {
+func (p *Program) Assemble() ([]bpf.Instruction, error) {
 
 	for _, jump := range p.jumps {
 		jumpInst := p.instructions[jump.index].(bpf.JumpIf)
 
-		jumpInst.SkipTrue = uint8(p.resolveLabel(jump, jump.trueLabel))
-		jumpInst.SkipFalse = uint8(p.resolveLabel(jump, jump.falseLabel))
+		skip, err := p.resolveLabel(jump, jump.trueLabel)
+		if err != nil {
+			return nil, err
+		}
+		jumpInst.SkipTrue = uint8(skip)
+
+		skip, err = p.resolveLabel(jump, jump.falseLabel)
+		if err != nil {
+			return nil, err
+		}
+		jumpInst.SkipFalse = uint8(skip)
+
+		if jumpInst.SkipTrue == 0 && jumpInst.SkipFalse == 0 {
+			return nil, fmt.Errorf("useless jump found")
+		}
 
 		p.instructions[jump.index] = jumpInst
 	}
 
-	return p.instructions
+	return p.instructions, nil
 }
 
 // resolveLabel resolves the label to a short jump.
-func (p *Program) resolveLabel(jump Jump, label Label) int {
+func (p *Program) resolveLabel(jump Jump, label Label) (int, error) {
 	dest := p.labels[label]
 	skipN := p.computeSkipN(jump, label)
 
-	if skipN < 0 {
-		// Jumping backwards is not supported, use the next destination.
-		// This happens when a new instruction was added to support long jumps,
-		//therefore, another destination must be available.
+	for skipN < 0 {
 		dest = dest[1:]
+		if len(dest) == 0 {
+			return 0, fmt.Errorf("backward jumps are not supported")
+		}
 		p.labels[label] = dest
 		skipN = p.computeSkipN(jump, label)
 	}
@@ -183,7 +197,7 @@ func (p *Program) resolveLabel(jump Jump, label Label) int {
 		p.labels[label] = append([]Index{insertIndex}, dest...)
 		skipN = p.computeSkipN(jump, label)
 	}
-	return skipN
+	return skipN, nil
 }
 
 // Inserts the instruction after the instruction indicated by index.
