@@ -73,7 +73,7 @@ type Program struct {
 	nextLabel    Label
 }
 
-// NewProgram initializes an empty program.
+// NewProgram returns an initialized empty program.
 func NewProgram() Program {
 	return Program{
 		instructions: make([]bpf.Instruction, 0),
