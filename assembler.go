@@ -141,7 +141,6 @@ func (p *Program) NewLabel() Label {
 // Assemble resolves all jump destinations to concrete instructions using the labels.
 // This method takes care of long jumps and resolves them by using early returns or unconditional long jumps.
 func (p *Program) Assemble() ([]bpf.Instruction, error) {
-
 	for _, jump := range p.jumps {
 		jumpInst := p.instructions[jump.index].(bpf.JumpIf)
 

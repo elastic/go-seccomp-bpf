@@ -135,7 +135,7 @@ type SyscallGroup struct {
 type ArgumentConditions []Condition
 
 func (a ArgumentConditions) Validate() []string {
-	problems := make([]string, 0)
+	var problems []string
 	for _, condition := range a {
 		if condition.Argument < 0 || condition.Argument > 5 {
 			problems = append(problems, fmt.Sprintf("argument must be between 0 and 5 (inclusive), but is %v", condition.Argument))
@@ -283,10 +283,9 @@ type SyscallWithConditions struct {
 // getSyscall searches the syscall in the list.
 // Do not use a map to keep the ordering, as specified by the user.
 func getSyscall(syscalls []SyscallWithConditions, syscall uint32) *SyscallWithConditions {
-	for i := 0; i < len(syscalls); i++ {
-		s := &syscalls[i]
+	for _, s := range syscalls {
 		if s.Num == syscall {
-			return s
+			return &s
 		}
 	}
 	return nil
@@ -294,10 +293,10 @@ func getSyscall(syscalls []SyscallWithConditions, syscall uint32) *SyscallWithCo
 
 // toSyscallsWithConditions transforms a syscall group to syscalls with conditions.
 func (g *SyscallGroup) toSyscallsWithConditions() ([]SyscallWithConditions, error) {
-	var problems []string
-
-	syscalls := make([]SyscallWithConditions, 0)
-
+	var (
+		syscalls []SyscallWithConditions
+		problems []string
+	)
 	for _, name := range g.Names {
 		if num, found := g.arch.SyscallNames[name]; found {
 			syscall := uint32(num | g.arch.SeccompMask)
@@ -322,8 +321,7 @@ func (g *SyscallGroup) toSyscallsWithConditions() ([]SyscallWithConditions, erro
 				continue
 			}
 			if check == nil {
-				conditions := make([]ArgumentConditions, 0)
-				conditions = append(conditions, nc.Conditions)
+				conditions := []ArgumentConditions{nc.Conditions}
 				syscalls = append(syscalls, SyscallWithConditions{Num: syscall, Conditions: conditions})
 			} else {
 				if len(check.Conditions) == 0 {

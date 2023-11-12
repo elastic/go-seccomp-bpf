@@ -276,7 +276,6 @@ func TestPolicyAssembleDefault(t *testing.T) {
 }
 
 func TestSimpleLongList(t *testing.T) {
-
 	syscallNumbers := make([]int, 0, len(arch.X86_64.SyscallNumbers))
 	for nr := range arch.X86_64.SyscallNumbers {
 		syscallNumbers = append(syscallNumbers, nr)
@@ -287,7 +286,6 @@ func TestSimpleLongList(t *testing.T) {
 	for i := 1; i < 6; i++ {
 		names = append(names, arch.X86_64.SyscallNumbers[i])
 	}
-
 	names = append(names, "read")
 
 	policy := &Policy{
@@ -314,7 +312,6 @@ func TestSimpleLongList(t *testing.T) {
 }
 
 func TestSimpleConditions(t *testing.T) {
-
 	for _, tc := range conditionTests {
 		t.Run(string(tc.cond), func(t *testing.T) {
 			policy := &Policy{
@@ -397,8 +394,7 @@ func TestTwoArgumentConditions(t *testing.T) {
 				policy.Dump(os.Stdout)
 			}
 
-			syscalls := make([]SeccompTest, 0)
-
+			syscalls := make([]SeccompTest, 0, len(conditionInput))
 			for _, arg1 := range conditionInput {
 				for _, arg2 := range conditionInput {
 					expected := ActionAllow
@@ -423,11 +419,10 @@ func TestTwoArgumentConditions(t *testing.T) {
 // https://github.com/seccomp/libseccomp/blob/main/src/arch.c#L287
 
 func TestLongConditions(t *testing.T) {
-
-	filter := make([]NameWithConditions, 0)
+	filter := make([]NameWithConditions, 0, 20)
 	for i := uint64(0); i < 20; i++ {
 
-		arguments := make([]Condition, 0)
+		arguments := make([]Condition, 0, 6)
 		for arg := 0; arg < 6; arg++ {
 			argument := Condition{
 				Argument:  arg,
