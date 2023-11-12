@@ -76,8 +76,6 @@ type Program struct {
 // NewProgram returns an initialized empty program.
 func NewProgram() Program {
 	return Program{
-		instructions: make([]bpf.Instruction, 0),
-		jumps:        make([]Jump, 0),
 		labels:       make(map[Label][]Index),
 		nextLabel:    Label(1),
 	}
