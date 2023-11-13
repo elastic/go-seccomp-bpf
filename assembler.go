@@ -20,13 +20,16 @@ package seccomp
 import (
 	"encoding/binary"
 	"fmt"
+	"math"
 	"unsafe"
 
 	"golang.org/x/net/bpf"
 )
 
 const (
-	argumentOffset = 16
+	argumentOffset = uint32(16)
+	sizeOfUint32   = int(unsafe.Sizeof(uint32(0)))
+	sizeOfUint64   = uint32(unsafe.Sizeof(uint64(0)))
 )
 
 var nativeEndian binary.ByteOrder
@@ -51,9 +54,9 @@ type Label int
 // Index is the concrete index of an instruction in the instruction list.
 type Index int
 
-// Jump jumps conditionally to the true or the false label.
+// JumpIf jumps conditionally to the true or the false label.
 // The concrete condition is not relevant to resolve the jumps.
-type Jump struct {
+type JumpIf struct {
 	index      Index
 	trueLabel  Label
 	falseLabel Label
@@ -68,7 +71,7 @@ type Jump struct {
 // Only forward jumps are supported; this means a label must not be used after setting it.
 type Program struct {
 	instructions []bpf.Instruction
-	jumps        []Jump
+	jumps        []JumpIf
 	labels       map[Label][]Index
 	nextLabel    Label
 }
@@ -76,8 +79,8 @@ type Program struct {
 // NewProgram returns an initialized empty program.
 func NewProgram() Program {
 	return Program{
-		labels:       make(map[Label][]Index),
-		nextLabel:    Label(1),
+		labels:    make(map[Label][]Index),
+		nextLabel: Label(1),
 	}
 }
 
@@ -94,7 +97,7 @@ func (p *Program) JmpIfTrue(cond bpf.JumpTest, val uint32, trueLabel Label) {
 // If the condition is true, it jumps to the true label.
 // If it is false, it jumps to the false label.
 func (p *Program) JmpIf(cond bpf.JumpTest, val uint32, trueLabel Label, falseLabel Label) {
-	p.jumps = append(p.jumps, Jump{index: p.currentIndex(), trueLabel: trueLabel, falseLabel: falseLabel})
+	p.jumps = append(p.jumps, JumpIf{index: p.currentIndex(), trueLabel: trueLabel, falseLabel: falseLabel})
 
 	inst := bpf.JumpIf{Cond: cond, Val: val}
 	p.instructions = append(p.instructions, inst)
@@ -115,21 +118,21 @@ func (p *Program) Ret(action Action) {
 }
 
 // LdHi inserts an instruction to load the most significant 32-bit of the 64-bit argument.
-func (p *Program) LdHi(arg int) {
-	offset := uint32(argumentOffset + 8*arg)
+func (p *Program) LdHi(arg uint32) {
+	offset := argumentOffset + sizeOfUint64*arg
 	if nativeEndian == binary.LittleEndian {
-		offset += 4
+		offset += uint32(sizeOfUint32)
 	}
-	p.instructions = append(p.instructions, bpf.LoadAbsolute{Off: offset, Size: 4})
+	p.instructions = append(p.instructions, bpf.LoadAbsolute{Off: offset, Size: sizeOfUint32})
 }
 
 // LdLo inserts an instruction to load the least significant 32-bit of the 64-bit argument.
-func (p *Program) LdLo(arg int) {
-	offset := uint32(argumentOffset + 8*arg)
+func (p *Program) LdLo(arg uint32) {
+	offset := argumentOffset + sizeOfUint64*arg
 	if nativeEndian == binary.BigEndian {
-		offset += 4
+		offset += uint32(sizeOfUint32)
 	}
-	p.instructions = append(p.instructions, bpf.LoadAbsolute{Off: offset, Size: 4})
+	p.instructions = append(p.instructions, bpf.LoadAbsolute{Off: offset, Size: sizeOfUint32})
 }
 
 // NewLabel creates a new label. It must be used with SetLabel.
@@ -148,13 +151,13 @@ func (p *Program) Assemble() ([]bpf.Instruction, error) {
 		if err != nil {
 			return nil, err
 		}
-		jumpInst.SkipTrue = uint8(skip)
+		jumpInst.SkipTrue = skip
 
 		skip, err = p.resolveLabel(jump, jump.falseLabel)
 		if err != nil {
 			return nil, err
 		}
-		jumpInst.SkipFalse = uint8(skip)
+		jumpInst.SkipFalse = skip
 
 		if jumpInst.SkipTrue == 0 && jumpInst.SkipFalse == 0 {
 			return nil, fmt.Errorf("useless jump found")
@@ -167,7 +170,7 @@ func (p *Program) Assemble() ([]bpf.Instruction, error) {
 }
 
 // resolveLabel resolves the label to a short jump.
-func (p *Program) resolveLabel(jump Jump, label Label) (int, error) {
+func (p *Program) resolveLabel(jump JumpIf, label Label) (uint8, error) {
 	dest := p.labels[label]
 	skipN := p.computeSkipN(jump, label)
 
@@ -180,7 +183,8 @@ func (p *Program) resolveLabel(jump Jump, label Label) (int, error) {
 		skipN = p.computeSkipN(jump, label)
 	}
 
-	if skipN > 255 {
+	// BPF does not support long conditional jumps.
+	if skipN > math.MaxUint8 {
 		insertAfter := findInsertAfter(p.jumps, jump)
 
 		// If the jump destination is a return instruction, copy it and add an early return,
@@ -194,11 +198,12 @@ func (p *Program) resolveLabel(jump Jump, label Label) (int, error) {
 		p.labels[label] = append([]Index{insertIndex}, dest...)
 		skipN = p.computeSkipN(jump, label)
 	}
-	return skipN, nil
+	return uint8(skipN), nil
 }
 
-// Inserts the instruction after the instruction indicated by index.
+// Inserts the instruction after the instruction indicated by index, which must come from p.jumps.
 func (p *Program) insertAfter(index Index, inst bpf.Instruction) Index {
+	// This is safe since we are only accessing instructions that were inserted as bpf.JumpIf.
 	jumpInst := p.instructions[index].(bpf.JumpIf)
 	p.instructions[index] = jumpInst
 
@@ -229,7 +234,7 @@ func (p *Program) updateIndices(after Index) {
 
 // Computes the number of instructions to skip by resolving the label.
 // It might be that the jump is a long jump.
-func (p *Program) computeSkipN(jump Jump, label Label) int {
+func (p *Program) computeSkipN(jump JumpIf, label Label) int {
 	dest := p.labels[label]
 	return int(dest[0]-jump.index) - 1
 }
@@ -238,7 +243,7 @@ func (p *Program) computeSkipN(jump Jump, label Label) int {
 // a short jump is searched.
 // It is necessary to search a jump instruction to jump over the new inserted instruction
 // and do not disturb the program flow.
-func findInsertAfter(jumps []Jump, currentJump Jump) Jump {
+func findInsertAfter(jumps []JumpIf, currentJump JumpIf) JumpIf {
 	insertAfter := currentJump
 	maxIndex := currentJump.index + 255
 	for _, jump := range jumps {

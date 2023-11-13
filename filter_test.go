@@ -101,14 +101,18 @@ var conditionTests = []struct {
 	{cond: BitsNotSet, eval: func(input, policy uint64) bool { return input&policy == 0 }},
 }
 
-// conditionInput to test the 64-bit operations.
+var testArgument1 uint64 = 0x0102_0304_0506_0708
+var testArgument2 uint64 = 0x1020_3040_5060_7080
+
+// hand crafted conditionInput to test the 64-bit operations.
 var conditionInput = []uint64{
 	0x0000_0000_0000_0000,
 	0x0000_0000_0506_0708,
 	0x0002_0304_0506_0707,
 	0x0102_0304_0000_0000,
 	0x0102_0304_0506_0707,
-	0x0102_0304_0506_0708,
+	testArgument1,
+	testArgument2,
 	0x0102_0304_0506_0709,
 	0x0202_0304_0506_0708,
 	0xFFFF_FFFF_FFFF_FFFF,
@@ -282,7 +286,7 @@ func TestSimpleLongList(t *testing.T) {
 	}
 	sort.Ints(syscallNumbers)
 
-	names := make([]string, 0)
+	names := make([]string, 0, 6)
 	for i := 1; i < 6; i++ {
 		names = append(names, arch.X86_64.SyscallNumbers[i])
 	}
@@ -305,7 +309,7 @@ func TestSimpleLongList(t *testing.T) {
 
 	simulateSyscalls(t, policy, []SeccompTest{
 		{
-			SeccompData{NR: 0, Arch: uint32(arch.X86_64.ID), Args: [6]uint64{0x0000_0006_0000_0007}},
+			SeccompData{NR: 0, Arch: uint32(arch.X86_64.ID)},
 			ActionKillThread,
 		},
 	})
@@ -328,7 +332,7 @@ func TestSimpleConditions(t *testing.T) {
 									{
 										Argument:  0,
 										Operation: tc.cond,
-										Value:     0x0102_0304_0506_0708,
+										Value:     testArgument1,
 									},
 								},
 							},
@@ -340,11 +344,11 @@ func TestSimpleConditions(t *testing.T) {
 				policy.Dump(os.Stdout)
 			}
 
-			syscalls := make([]SeccompTest, 0)
+			syscalls := make([]SeccompTest, 0, len(conditionInput))
 
 			for _, i := range conditionInput {
 				expected := ActionAllow
-				if tc.eval(i, 0x0102_0304_0506_0708) {
+				if tc.eval(i, testArgument1) {
 					expected = ActionKillThread
 				}
 
@@ -376,12 +380,12 @@ func TestTwoArgumentConditions(t *testing.T) {
 									{
 										Argument:  0,
 										Operation: tc.cond,
-										Value:     0x0102_0304_0506_0708,
+										Value:     testArgument1,
 									},
 									{
 										Argument:  1,
 										Operation: tc.cond,
-										Value:     0x1020_3040_5060_7080,
+										Value:     testArgument2,
 									},
 								},
 							},
@@ -398,7 +402,7 @@ func TestTwoArgumentConditions(t *testing.T) {
 			for _, arg1 := range conditionInput {
 				for _, arg2 := range conditionInput {
 					expected := ActionAllow
-					if tc.eval(arg1, 0x0102_0304_0506_0708) && tc.eval(arg2, 0x1020_3040_5060_7080) {
+					if tc.eval(arg1, testArgument1) && tc.eval(arg2, testArgument2) {
 						expected = ActionKillThread
 					}
 
@@ -414,16 +418,12 @@ func TestTwoArgumentConditions(t *testing.T) {
 	}
 }
 
-// https://stackoverflow.com/questions/3337896/imitate-emulate-a-big-endian-behavior-in-c
-// https://github.com/seccomp/libseccomp/blob/1852fe3d772914d848907f9d0656747776ed3f98/src/gen_bpf.c#L233
-// https://github.com/seccomp/libseccomp/blob/main/src/arch.c#L287
-
 func TestLongConditions(t *testing.T) {
 	filter := make([]NameWithConditions, 0, 20)
 	for i := uint64(0); i < 20; i++ {
 
 		arguments := make([]Condition, 0, 6)
-		for arg := 0; arg < 6; arg++ {
+		for arg := uint32(0); arg < 6; arg++ {
 			argument := Condition{
 				Argument:  arg,
 				Operation: Equal,

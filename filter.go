@@ -150,7 +150,7 @@ type NameWithConditions struct {
 }
 
 type Condition struct {
-	Argument  int       `config:"argument" default:"0" json:"position"  yaml:"position"`
+	Argument  uint32    `config:"argument" default:"0" json:"position"  yaml:"position"`
 	Operation Operation `config:"operation" validate:"required" json:"operation"  yaml:"operation"`
 	Value     uint64    `config:"value" default:"0" json:"value"  yaml:"value"`
 }
@@ -239,7 +239,7 @@ func (p *Policy) Assemble() ([]bpf.Instruction, error) {
 
 	program := make([]bpf.Instruction, 0, len(x32Filter)+len(instructions)+5)
 
-	program = append(program, bpf.LoadAbsolute{Off: archOffset, Size: 4})
+	program = append(program, bpf.LoadAbsolute{Off: archOffset, Size: sizeOfUint32})
 
 	// If the loaded arch ID is not equal p.arch.ID, jump to the final Ret instruction.
 	jumpN := len(x32Filter) + len(instructions) - 1
@@ -251,7 +251,7 @@ func (p *Policy) Assemble() ([]bpf.Instruction, error) {
 		program = append(program, bpf.Jump{Skip: uint32(jumpN)})
 	}
 
-	program = append(program, bpf.LoadAbsolute{Off: syscallNumOffset, Size: 4})
+	program = append(program, bpf.LoadAbsolute{Off: syscallNumOffset, Size: sizeOfUint32})
 	program = append(program, x32Filter...)
 	program = append(program, instructions...)
 	return program, nil
@@ -283,9 +283,12 @@ type SyscallWithConditions struct {
 // getSyscall searches the syscall in the list.
 // Do not use a map to keep the ordering, as specified by the user.
 func getSyscall(syscalls []SyscallWithConditions, syscall uint32) *SyscallWithConditions {
-	for _, s := range syscalls {
+	for i := range syscalls {
+		// Use the reference directely from the slice rather than the iteration variable from range,
+		// as the iteration variable in a range loop is a copy and cannot be modified.
+		s := &syscalls[i]
 		if s.Num == syscall {
-			return &s
+			return s
 		}
 	}
 	return nil
