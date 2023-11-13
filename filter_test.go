@@ -464,12 +464,14 @@ func TestLongConditions(t *testing.T) {
 			ActionKillThread,
 		},
 		{
-			SeccompData{NR: 1, Arch: uint32(arch.X86_64.ID), Args: [6]uint64{lastCheck,
+			SeccompData{NR: 1, Arch: uint32(arch.X86_64.ID), Args: [6]uint64{
+				lastCheck,
 				lastCheck + 1,
 				lastCheck + 2,
 				lastCheck + 3,
 				lastCheck + 4,
-				lastCheck + 5}},
+				lastCheck + 5,
+			}},
 			ActionKillThread,
 		},
 		{
