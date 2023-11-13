@@ -101,8 +101,10 @@ var conditionTests = []struct {
 	{cond: BitsNotSet, eval: func(input, policy uint64) bool { return input&policy == 0 }},
 }
 
-var testArgument1 uint64 = 0x0102_0304_0506_0708
-var testArgument2 uint64 = 0x1020_3040_5060_7080
+const (
+	testArgument1 = 0x0102_0304_0506_0708
+	testArgument2 = 0x1020_3040_5060_7080
+)
 
 // hand crafted conditionInput to test the 64-bit operations.
 var conditionInput = []uint64{
