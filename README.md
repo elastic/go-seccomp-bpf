@@ -31,6 +31,7 @@ program is generated based on a filter policy created by you.
 
 - Pure Go and does not have a libseccomp dependency.
 - Filters are customizable and can be written as an allowlist or blocklist.
+- Supports system call argument filtering.
 - Uses `SECCOMP_FILTER_FLAG_TSYNC` to sync the filter to all threads created by
   the Go runtime.
 - Invokes `prctl(PR_SET_NO_NEW_PRIVS, 1)` to set the threads `no_new_privs` bit
@@ -40,8 +41,6 @@ program is generated based on a filter policy created by you.
 
 ###### Limitations
 
-- System call argument filtering is not implemented. (Pull requests are
-  welcomed. See #1.)
 - System call tables are only implemented for 386, amd64, arm and arm64.
   (More system call table generation code should be added to
   [arch/mk_syscalls_linux.go](./arch/mk_syscalls_linux.go).)

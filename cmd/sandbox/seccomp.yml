@@ -25,3 +25,12 @@ seccomp:
     - recvmsg
     - bind
     - listen
+  # System Call Argument Filtering examples.
+  # CLONE_NEWUSER must be set.
+  - action: errno
+    names_with_args:
+    - name: clone
+      arguments: 
+      - argument: 0
+        operation: BitsNotSet
+        value: 0x10000000 
