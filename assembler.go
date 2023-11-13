@@ -145,6 +145,7 @@ func (p *Program) NewLabel() Label {
 // This method takes care of long jumps and resolves them by using early returns or unconditional long jumps.
 func (p *Program) Assemble() ([]bpf.Instruction, error) {
 	for _, jump := range p.jumps {
+		// This is safe since we are only accessing instructions that were inserted as bpf.JumpIf.
 		jumpInst := p.instructions[jump.index].(bpf.JumpIf)
 
 		skip, err := p.resolveLabel(jump, jump.trueLabel)
