@@ -26,7 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Updated syscall tables for Linux v6.5 to add cachestat.
+- Updated syscall tables for Linux v6.6 to add cachestat, fchmodat2, map_shadow_stack. [#27](https://github.com/elastic/go-seccomp-bpf/pull/27) [#30](https://github.com/elastic/go-seccomp-bpf/pull/30)
 
 ## [1.3.0] - 2022-11-27
 
