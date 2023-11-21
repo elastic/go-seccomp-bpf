@@ -10,8 +10,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Updated syscall tables for Linux v6.5 to add cachestat.
-
 ### Deprecated
 
 ### Removed
@@ -19,6 +17,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [1.4.0]
+
+### Added
+
+- Added system call argument filtering. [#28](https://github.com/elastic/go-seccomp-bpf/pull/28)
+
+### Changed
+
+- Updated syscall tables for Linux v6.5 to add cachestat.
 
 ## [1.3.0] - 2022-11-27
 
@@ -52,7 +60,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/elastic/go-seccomp-bpf/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/elastic/go-seccomp-bpf/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/elastic/go-seccomp-bpf/v1.3.0...v1.4.0
+[1.3.0]: https://github.com/elastic/go-seccomp-bpf/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/elastic/go-seccomp-bpf/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/elastic/go-seccomp-bpf/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/elastic/go-seccomp-bpf/v1.0.0
