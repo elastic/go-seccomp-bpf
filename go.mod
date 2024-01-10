@@ -6,7 +6,7 @@ require (
 	github.com/elastic/go-ucfg v0.8.6
 	github.com/stretchr/testify v1.8.1
 	golang.org/x/net v0.2.0
-	golang.org/x/sys v0.2.0
+	golang.org/x/sys v0.16.1-0.20240110015235-f69d32aa924f
 	gopkg.in/yaml.v2 v2.4.0
 )
 

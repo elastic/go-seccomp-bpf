@@ -1,0 +1,31 @@
+//go:build !linux
+// +build !linux
+
+package unix
+
+const PR_SET_NO_NEW_PRIVS = 0x26
+
+const (
+	SECCOMP_SET_MODE_STRICT = 0x0
+	SECCOMP_SET_MODE_FILTER = 0x1
+)
+
+const (
+	SECCOMP_RET_KILL_THREAD  = 0x0
+	SECCOMP_RET_KILL_PROCESS = 0x80000000
+	SECCOMP_RET_TRAP         = 0x30000
+	SECCOMP_RET_ERRNO        = 0x50000
+	SECCOMP_RET_TRACE        = 0x7ff00000
+	SECCOMP_RET_LOG          = 0x7ffc0000
+	SECCOMP_RET_ALLOW        = 0x7fff0000
+)
+
+const (
+	EPERM  = 0x1
+	ENOSYS = 0x26
+)
+
+const (
+	SECCOMP_FILTER_FLAG_TSYNC = 0x1
+	SECCOMP_FILTER_FLAG_LOG   = 0x2
+)
