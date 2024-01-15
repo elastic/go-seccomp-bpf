@@ -18,6 +18,7 @@ const (
 	SECCOMP_RET_TRACE        = 0x7ff00000
 	SECCOMP_RET_LOG          = 0x7ffc0000
 	SECCOMP_RET_ALLOW        = 0x7fff0000
+	SECCOMP_RET_USER_NOTIF   = 0x7fc00000
 )
 
 const (

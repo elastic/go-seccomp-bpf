@@ -53,6 +53,7 @@ const (
 	ActionTrace       Action = unix.SECCOMP_RET_TRACE        // Pass to a tracer or disallow.
 	ActionLog         Action = unix.SECCOMP_RET_LOG          // Allow after logging.
 	ActionAllow       Action = unix.SECCOMP_RET_ALLOW        // Allow.
+	ActionUserNotify  Action = unix.SECCOMP_RET_USER_NOTIF   // Forward to user-space supervisor.
 )
 
 const (
