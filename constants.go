@@ -15,21 +15,13 @@
 // specific language governing permissions and limitations
 // under the License.
 
-//go:build ignore
-// +build ignore
-
 package seccomp
 
-// #include <errno.h>
-// #include <linux/filter.h>
-// #include <linux/seccomp.h>
-// #include <sys/prctl.h>
-// #include <stdlib.h>
-import "C"
+import "github.com/elastic/go-seccomp-bpf/internal/unix"
 
 // prSetNoNewPrivs defines the prctl flag to set the calling thread's
 // no_new_privs bit.
-const prSetNoNewPrivs = C.PR_SET_NO_NEW_PRIVS
+const prSetNoNewPrivs = unix.PR_SET_NO_NEW_PRIVS
 
 // Valid operations for seccomp syscall.
 // https://github.com/torvalds/linux/blob/v4.16/include/uapi/linux/seccomp.h#L14-L17
@@ -37,11 +29,11 @@ const (
 	// Seccomp filter mode where only system calls that the calling thread is
 	// permitted to make are read(2), write(2), _exit(2) (but not
 	// exit_group(2)), and sigreturn(2). Flags must be 0.
-	seccompSetModeStrict = C.SECCOMP_SET_MODE_STRICT
+	seccompSetModeStrict = unix.SECCOMP_SET_MODE_STRICT
 
 	// Seccomp filter mode where a BPF filter defines what system calls are
 	// allowed.
-	seccompSetModeFilter = C.SECCOMP_SET_MODE_FILTER
+	seccompSetModeFilter = unix.SECCOMP_SET_MODE_FILTER
 )
 
 // The arch field is not unique for all calling conventions.  The x86-64
@@ -54,18 +46,19 @@ const x32SyscallMask = 0x40000000
 // List of actions.
 // https://github.com/torvalds/linux/blob/v4.16/include/uapi/linux/seccomp.h#L32-L39
 const (
-	ActionKillThread  Action = C.SECCOMP_RET_KILL_THREAD  // Kill the calling thread.
-	ActionKillProcess Action = C.SECCOMP_RET_KILL_PROCESS // Kill the process (since kernel 4.14).
-	ActionTrap        Action = C.SECCOMP_RET_TRAP         // Disallow and force a SIGSYS signal.
-	ActionErrno       Action = C.SECCOMP_RET_ERRNO        // Disallow and return an errno.
-	ActionTrace       Action = C.SECCOMP_RET_TRACE        // Pass to a tracer or disallow.
-	ActionLog         Action = C.SECCOMP_RET_LOG          // Allow after logging.
-	ActionAllow       Action = C.SECCOMP_RET_ALLOW        // Allow.
+	ActionKillThread  Action = unix.SECCOMP_RET_KILL_THREAD  // Kill the calling thread.
+	ActionKillProcess Action = unix.SECCOMP_RET_KILL_PROCESS // Kill the process (since kernel 4.14).
+	ActionTrap        Action = unix.SECCOMP_RET_TRAP         // Disallow and force a SIGSYS signal.
+	ActionErrno       Action = unix.SECCOMP_RET_ERRNO        // Disallow and return an errno.
+	ActionTrace       Action = unix.SECCOMP_RET_TRACE        // Pass to a tracer or disallow.
+	ActionLog         Action = unix.SECCOMP_RET_LOG          // Allow after logging.
+	ActionAllow       Action = unix.SECCOMP_RET_ALLOW        // Allow.
+	ActionUserNotify  Action = unix.SECCOMP_RET_USER_NOTIF   // Forward to user-space supervisor.
 )
 
 const (
-	errnoEPERM  = C.EPERM
-	errnoENOSYS = C.ENOSYS
+	errnoEPERM  = unix.EPERM
+	errnoENOSYS = unix.ENOSYS
 )
 
 // List of SECCOMP_SET_MODE_FILTER values.
@@ -73,9 +66,9 @@ const (
 const (
 	// When adding a new filter, synchronize all other threads of the calling
 	// process to the same seccomp filter tree. Since Linux 3.17.
-	FilterFlagTSync FilterFlag = C.SECCOMP_FILTER_FLAG_TSYNC
+	FilterFlagTSync FilterFlag = unix.SECCOMP_FILTER_FLAG_TSYNC
 
 	// All filter return actions except SECCOMP_RET_ALLOW should be logged.
 	// Since Linux 4.14.
-	FilterFlagLog FilterFlag = C.SECCOMP_FILTER_FLAG_LOG
+	FilterFlagLog FilterFlag = unix.SECCOMP_FILTER_FLAG_LOG
 )
