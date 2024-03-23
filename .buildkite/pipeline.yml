@@ -1,7 +1,6 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/buildkite/pipeline-schema/main/schema.json
 env:
-  GO_VERSION: '1.18'
-  GO111MODULE: 'on'
+  GO_VERSION: '1.22'
 
 steps:
   - label: ":buildkite: Verify"
