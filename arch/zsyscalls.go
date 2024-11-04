@@ -19,7 +19,7 @@
 
 package arch
 
-// Based on Linux v6.6.
+// Based on Linux v6.11.
 
 var syscallsARM = map[int]string{
 	0:      "restart_syscall",
@@ -427,6 +427,16 @@ var syscallsARM = map[int]string{
 	450:    "set_mempolicy_home_node",
 	451:    "cachestat",
 	452:    "fchmodat2",
+	453:    "map_shadow_stack",
+	454:    "futex_wake",
+	455:    "futex_wait",
+	456:    "futex_requeue",
+	457:    "statmount",
+	458:    "listmount",
+	459:    "lsm_get_self_attr",
+	460:    "lsm_set_self_attr",
+	461:    "lsm_list_modules",
+	462:    "mseal",
 	983041: "breakpoint",
 	983042: "cacheflush",
 	983043: "usr26",
@@ -765,6 +775,16 @@ var syscallsAARCH64 = map[int]string{
 	450: "set_mempolicy_home_node",
 	451: "cachestat",
 	452: "fchmodat2",
+	453: "map_shadow_stack",
+	454: "futex_wake",
+	455: "futex_wait",
+	456: "futex_requeue",
+	457: "statmount",
+	458: "listmount",
+	459: "lsm_get_self_attr",
+	460: "lsm_set_self_attr",
+	461: "lsm_list_modules",
+	462: "mseal",
 }
 
 var syscalls386 = map[int]string{
@@ -1210,6 +1230,16 @@ var syscalls386 = map[int]string{
 	450: "set_mempolicy_home_node",
 	451: "cachestat",
 	452: "fchmodat2",
+	453: "map_shadow_stack",
+	454: "futex_wake",
+	455: "futex_wait",
+	456: "futex_requeue",
+	457: "statmount",
+	458: "listmount",
+	459: "lsm_get_self_attr",
+	460: "lsm_set_self_attr",
+	461: "lsm_list_modules",
+	462: "mseal",
 }
 
 var syscallsX32 = map[int]string{
@@ -1548,6 +1578,7 @@ var syscallsX32 = map[int]string{
 	332: "statx",
 	333: "io_pgetevents",
 	334: "rseq",
+	335: "uretprobe",
 	424: "pidfd_send_signal",
 	425: "io_uring_setup",
 	426: "io_uring_enter",
@@ -1578,6 +1609,15 @@ var syscallsX32 = map[int]string{
 	451: "cachestat",
 	452: "fchmodat2",
 	453: "map_shadow_stack",
+	454: "futex_wake",
+	455: "futex_wait",
+	456: "futex_requeue",
+	457: "statmount",
+	458: "listmount",
+	459: "lsm_get_self_attr",
+	460: "lsm_set_self_attr",
+	461: "lsm_list_modules",
+	462: "mseal",
 	512: "rt_sigaction",
 	513: "rt_sigreturn",
 	514: "ioctl",
@@ -1952,6 +1992,7 @@ var syscallsX86_64 = map[int]string{
 	332: "statx",
 	333: "io_pgetevents",
 	334: "rseq",
+	335: "uretprobe",
 	424: "pidfd_send_signal",
 	425: "io_uring_setup",
 	426: "io_uring_enter",
@@ -1982,4 +2023,13 @@ var syscallsX86_64 = map[int]string{
 	451: "cachestat",
 	452: "fchmodat2",
 	453: "map_shadow_stack",
+	454: "futex_wake",
+	455: "futex_wait",
+	456: "futex_requeue",
+	457: "statmount",
+	458: "listmount",
+	459: "lsm_get_self_attr",
+	460: "lsm_set_self_attr",
+	461: "lsm_list_modules",
+	462: "mseal",
 }
