@@ -10,8 +10,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Updated syscall tables based on Linux v6.11. [#36](https://github.com/elastic/go-seccomp-bpf/pull/36)
- 
 ### Deprecated
 
 ### Removed
@@ -20,7 +18,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
-## [1.4.0]
+## [1.5.0] - 2024-11-06
+
+### Changed
+
+- Updated syscall tables based on Linux v6.11. [#36](https://github.com/elastic/go-seccomp-bpf/pull/36)
+ 
+## [1.4.0] - 2023-11-21
 
 ### Added
 
@@ -62,9 +66,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/elastic/go-seccomp-bpf/compare/v1.4.0...HEAD
-[1.4.0]: https://github.com/elastic/go-seccomp-bpf/v1.3.0...v1.4.0
-[1.3.0]: https://github.com/elastic/go-seccomp-bpf/v1.2.0...v1.3.0
-[1.2.0]: https://github.com/elastic/go-seccomp-bpf/v1.1.0...v1.2.0
-[1.1.0]: https://github.com/elastic/go-seccomp-bpf/v1.0.0...v1.1.0
-[1.0.0]: https://github.com/elastic/go-seccomp-bpf/v1.0.0
+[Unreleased]: https://github.com/elastic/go-seccomp-bpf/compare/v1.5.0...HEAD
+[1.5.0]: https://github.com/elastic/go-seccomp-bpf/releases/v1.5.0
+[1.4.0]: https://github.com/elastic/go-seccomp-bpf/releases/v1.4.0
+[1.3.0]: https://github.com/elastic/go-seccomp-bpf/releases/v1.3.0
+[1.2.0]: https://github.com/elastic/go-seccomp-bpf/releases/v1.2.0
+[1.1.0]: https://github.com/elastic/go-seccomp-bpf/releases/v1.1.0
+[1.0.0]: https://github.com/elastic/go-seccomp-bpf/releases/v1.0.0
