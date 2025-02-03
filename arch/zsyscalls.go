@@ -19,7 +19,7 @@
 
 package arch
 
-// Based on Linux v6.11.
+// Based on Linux v6.13.
 
 var syscallsARM = map[int]string{
 	0:      "restart_syscall",
@@ -437,6 +437,10 @@ var syscallsARM = map[int]string{
 	460:    "lsm_set_self_attr",
 	461:    "lsm_list_modules",
 	462:    "mseal",
+	463:    "setxattrat",
+	464:    "getxattrat",
+	465:    "listxattrat",
+	466:    "removexattrat",
 	983041: "breakpoint",
 	983042: "cacheflush",
 	983043: "usr26",
@@ -785,6 +789,10 @@ var syscallsAARCH64 = map[int]string{
 	460: "lsm_set_self_attr",
 	461: "lsm_list_modules",
 	462: "mseal",
+	463: "setxattrat",
+	464: "getxattrat",
+	465: "listxattrat",
+	466: "removexattrat",
 }
 
 var syscalls386 = map[int]string{
@@ -1240,6 +1248,10 @@ var syscalls386 = map[int]string{
 	460: "lsm_set_self_attr",
 	461: "lsm_list_modules",
 	462: "mseal",
+	463: "setxattrat",
+	464: "getxattrat",
+	465: "listxattrat",
+	466: "removexattrat",
 }
 
 var syscallsX32 = map[int]string{
@@ -1618,6 +1630,10 @@ var syscallsX32 = map[int]string{
 	460: "lsm_set_self_attr",
 	461: "lsm_list_modules",
 	462: "mseal",
+	463: "setxattrat",
+	464: "getxattrat",
+	465: "listxattrat",
+	466: "removexattrat",
 	512: "rt_sigaction",
 	513: "rt_sigreturn",
 	514: "ioctl",
@@ -2032,4 +2048,8 @@ var syscallsX86_64 = map[int]string{
 	460: "lsm_set_self_attr",
 	461: "lsm_list_modules",
 	462: "mseal",
+	463: "setxattrat",
+	464: "getxattrat",
+	465: "listxattrat",
+	466: "removexattrat",
 }
