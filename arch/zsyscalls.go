@@ -19,7 +19,7 @@
 
 package arch
 
-// Based on Linux v6.13.
+// Based on Linux v6.14.
 
 var syscallsARM = map[int]string{
 	0:      "restart_syscall",
