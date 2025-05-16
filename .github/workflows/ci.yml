@@ -29,7 +29,6 @@ jobs:
           [ "$(gofumpt -l $(find . -name "*.go") | wc -l)" -gt 0 ] && exit 1 || echo "passed"
 
   test:
-    needs: lint
     strategy:
       fail-fast: false
       matrix:
