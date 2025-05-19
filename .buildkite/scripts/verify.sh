@@ -5,7 +5,7 @@ set -euo pipefail
 echo "--- Pre install"
 source .buildkite/scripts/pre-install-command.sh
 add_bin_path
-go install mvdan.cc/gofumpt@latest
+go install mvdan.cc/gofumpt@v0.4.0
 go install github.com/elastic/go-licenser@latest
 
 echo "--- verify"
