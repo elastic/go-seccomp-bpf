@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Updated syscall table based on Linux v6.13. [#41](https://github.com/elastic/go-seccomp-bpf/pull/41)
+- Updated syscall table based on Linux v6.14. [#43](https://github.com/elastic/go-seccomp-bpf/pull/43)
+- Updated syscall table based on Linux v6.15. [#47](https://github.com/elastic/go-seccomp-bpf/pull/47)
 
 ### Deprecated
 
