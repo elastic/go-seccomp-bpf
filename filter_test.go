@@ -138,19 +138,19 @@ func TestPolicyAssembleBlacklist(t *testing.T) {
 
 	simulateSyscalls(t, policy, []SeccompTest{
 		{
-			SeccompData{NR: 59, Arch: uint32(arch.X86_64.ID)},
+			SeccompData{NR: 59 /* execve */, Arch: uint32(arch.X86_64.ID)},
 			ActionKillThread,
 		},
 		{
-			SeccompData{NR: 57, Arch: uint32(arch.X86_64.ID)},
+			SeccompData{NR: 57 /* fork */, Arch: uint32(arch.X86_64.ID)},
 			ActionKillThread,
 		},
 		{
-			SeccompData{NR: 4, Arch: uint32(arch.X86_64.ID)},
+			SeccompData{NR: 4 /* stat */, Arch: uint32(arch.X86_64.ID)},
 			ActionAllow,
 		},
 		{
-			SeccompData{NR: 4, Arch: uint32(arch.ARM.ID)},
+			SeccompData{NR: 4 /* write */, Arch: uint32(arch.ARM.ID)},
 			ActionAllow,
 		},
 		{
@@ -184,15 +184,23 @@ func TestPolicyAssembleWhitelist(t *testing.T) {
 
 	simulateSyscalls(t, policy, []SeccompTest{
 		{
-			SeccompData{NR: 59, Arch: uint32(arch.X86_64.ID)},
+			SeccompData{NR: 59 /* execve */, Arch: uint32(arch.X86_64.ID)},
 			ActionAllow,
 		},
 		{
-			SeccompData{NR: 4, Arch: uint32(arch.X86_64.ID)},
+			SeccompData{NR: 57 /* fork */, Arch: uint32(arch.X86_64.ID)},
+			ActionAllow,
+		},
+		{
+			SeccompData{NR: 56 /* clone */, Arch: uint32(arch.X86_64.ID)},
+			ActionAllow,
+		},
+		{
+			SeccompData{NR: 4 /* write */, Arch: uint32(arch.X86_64.ID)},
 			ActionKillProcess,
 		},
 		{
-			SeccompData{NR: 4, Arch: uint32(arch.ARM.ID)},
+			SeccompData{NR: 4 /* write */, Arch: uint32(arch.ARM.ID)},
 			ActionKillProcess,
 		},
 	})
