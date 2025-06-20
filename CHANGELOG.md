@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated syscall table based on Linux v6.13. [#41](https://github.com/elastic/go-seccomp-bpf/pull/41)
 - Updated syscall table based on Linux v6.14. [#43](https://github.com/elastic/go-seccomp-bpf/pull/43)
 - Updated syscall table based on Linux v6.15. [#47](https://github.com/elastic/go-seccomp-bpf/pull/47)
+- Update Go module version 1.23.0. [#50](https://github.com/elastic/go-seccomp-bpf/pull/50)
 
 ### Deprecated
 
