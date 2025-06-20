@@ -56,7 +56,7 @@ Linux sources. Update the git tag [here](https://github.com/elastic/go-seccomp-b
 and then run this command to generate the code.
 
 ```shell
-docker run -it --rm -v `pwd`:/go-seccomp-bpf -w /go-seccomp-bpf/arch golang:1.18 go generate
+docker run -it --rm -v `pwd`:/go-seccomp-bpf -w /go-seccomp-bpf/arch golang:1.23.0 go generate
 ```
 
 ###### Projects Using elastic/go-seccomp-bpf
