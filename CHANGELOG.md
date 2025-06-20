@@ -10,27 +10,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Updated syscall table based on Linux v6.13. [#41](https://github.com/elastic/go-seccomp-bpf/pull/41)
-- Updated syscall table based on Linux v6.14. [#43](https://github.com/elastic/go-seccomp-bpf/pull/43)
-- Updated syscall table based on Linux v6.15. [#47](https://github.com/elastic/go-seccomp-bpf/pull/47)
-- Update Go module version 1.23.0. [#50](https://github.com/elastic/go-seccomp-bpf/pull/50)
-
 ### Deprecated
 
 ### Removed
 
 ### Fixed
 
-- Fixed a control flow bug in the filter when multiple syscall groups are defined. [#40](https://github.com/elastic/go-seccomp-bpf/issues/40)
-
 ### Security
+
+## [1.6.0] - 2025-06-20
+
+### Changed
+
+- Updated syscall table based on Linux v6.15. [#47](https://github.com/elastic/go-seccomp-bpf/pull/47)
+- Update Go module version 1.23.0. [#50](https://github.com/elastic/go-seccomp-bpf/pull/50)
+
+### Fixed
+
+- Fixed a control flow bug in the filter when multiple syscall groups are defined. [#40](https://github.com/elastic/go-seccomp-bpf/issues/40)
 
 ## [1.5.0] - 2024-11-06
 
 ### Changed
 
 - Updated syscall tables based on Linux v6.11. [#36](https://github.com/elastic/go-seccomp-bpf/pull/36)
- 
+
 ## [1.4.0] - 2023-11-21
 
 ### Added
@@ -73,7 +77,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/elastic/go-seccomp-bpf/compare/v1.5.0...HEAD
+[Unreleased]: https://github.com/elastic/go-seccomp-bpf/compare/v1.6.0...HEAD
+[1.6.0]: https://github.com/elastic/go-seccomp-bpf/releases/v1.6.0
 [1.5.0]: https://github.com/elastic/go-seccomp-bpf/releases/v1.5.0
 [1.4.0]: https://github.com/elastic/go-seccomp-bpf/releases/v1.4.0
 [1.3.0]: https://github.com/elastic/go-seccomp-bpf/releases/v1.3.0
