@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Fixed a control flow bug in the filter when multiple syscall groups are defined. [#40](https://github.com/elastic/go-seccomp-bpf/issues/40)
+
 ### Security
 
 ## [1.5.0] - 2024-11-06
