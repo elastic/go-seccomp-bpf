@@ -19,7 +19,7 @@
 
 package arch
 
-// Based on Linux v6.17.
+// Based on Linux v6.18.
 
 var syscallsARM = map[int]string{
 	0:      "restart_syscall",
@@ -1600,6 +1600,7 @@ var syscallsX32 = map[int]string{
 	333: "io_pgetevents",
 	334: "rseq",
 	335: "uretprobe",
+	336: "uprobe",
 	424: "pidfd_send_signal",
 	425: "io_uring_setup",
 	426: "io_uring_enter",
@@ -2021,6 +2022,7 @@ var syscallsX86_64 = map[int]string{
 	333: "io_pgetevents",
 	334: "rseq",
 	335: "uretprobe",
+	336: "uprobe",
 	424: "pidfd_send_signal",
 	425: "io_uring_setup",
 	426: "io_uring_enter",
