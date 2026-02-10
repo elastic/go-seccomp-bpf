@@ -19,7 +19,7 @@
 
 package arch
 
-// Based on Linux v6.18.
+// Based on Linux v6.19.
 
 var syscallsARM = map[int]string{
 	0:      "restart_syscall",
@@ -444,6 +444,7 @@ var syscallsARM = map[int]string{
 	467:    "open_tree_attr",
 	468:    "file_getattr",
 	469:    "file_setattr",
+	470:    "listns",
 	983041: "breakpoint",
 	983042: "cacheflush",
 	983043: "usr26",
@@ -799,6 +800,7 @@ var syscallsAARCH64 = map[int]string{
 	467: "open_tree_attr",
 	468: "file_getattr",
 	469: "file_setattr",
+	470: "listns",
 }
 
 var syscalls386 = map[int]string{
@@ -1261,6 +1263,7 @@ var syscalls386 = map[int]string{
 	467: "open_tree_attr",
 	468: "file_getattr",
 	469: "file_setattr",
+	470: "listns",
 }
 
 var syscallsX32 = map[int]string{
@@ -1647,6 +1650,7 @@ var syscallsX32 = map[int]string{
 	467: "open_tree_attr",
 	468: "file_getattr",
 	469: "file_setattr",
+	470: "listns",
 	512: "rt_sigaction",
 	513: "rt_sigreturn",
 	514: "ioctl",
@@ -2069,4 +2073,5 @@ var syscallsX86_64 = map[int]string{
 	467: "open_tree_attr",
 	468: "file_getattr",
 	469: "file_setattr",
+	470: "listns",
 }
