@@ -124,9 +124,9 @@ type Policy struct {
 // SyscallGroup is a logical block within a Policy that contains a set of
 // syscalls to match against and an action to take.
 type SyscallGroup struct {
-	Names              []string             `config:"names"  json:"names"  yaml:"names"`                              // List of syscall names (all must exist).
-	NamesWithCondtions []NameWithConditions `config:"names_with_args" json:"names_with_args"  yaml:"names_with_args"` // List of syscall with argument filters
-	Action             Action               `config:"action" validate:"required" json:"action" yaml:"action"`         // Action to take upon a match.
+	Names               []string             `config:"names"  json:"names"  yaml:"names"`                              // List of syscall names (all must exist).
+	NamesWithConditions []NameWithConditions `config:"names_with_args" json:"names_with_args"  yaml:"names_with_args"` // List of syscall with argument filters
+	Action              Action               `config:"action" validate:"required" json:"action" yaml:"action"`         // Action to take upon a match.
 
 	arch *arch.Info
 }
@@ -262,7 +262,7 @@ func (p *Policy) Assemble() ([]bpf.Instruction, error) {
 	return program, nil
 }
 
-// Dump writes a textual represenation of the BPF instructions to out.
+// Dump writes a textual representation of the BPF instructions to out.
 func (p *Policy) Dump(out io.Writer) error {
 	assembled, err := p.Assemble()
 	if err != nil {
@@ -289,7 +289,7 @@ type SyscallWithConditions struct {
 // Do not use a map to keep the ordering, as specified by the user.
 func getSyscall(syscalls []SyscallWithConditions, syscall uint32) *SyscallWithConditions {
 	for i := range syscalls {
-		// Use the reference directely from the slice rather than the iteration variable from range,
+		// Use the reference directly from the slice rather than the iteration variable from range,
 		// as the iteration variable in a range loop is a copy and cannot be modified.
 		s := &syscalls[i]
 		if s.Num == syscall {
@@ -318,7 +318,7 @@ func (g *SyscallGroup) toSyscallsWithConditions() ([]SyscallWithConditions, erro
 		}
 	}
 
-	for _, nc := range g.NamesWithCondtions {
+	for _, nc := range g.NamesWithConditions {
 		if num, found := g.arch.SyscallNames[nc.Name]; found {
 			syscall := uint32(num | g.arch.SeccompMask)
 			check := getSyscall(syscalls, syscall)
@@ -353,7 +353,7 @@ func (g *SyscallGroup) toSyscallsWithConditions() ([]SyscallWithConditions, erro
 
 func (g *SyscallGroup) Assemble(p *Program) error {
 	// Skip empty syscall groups.
-	if len(g.Names)+len(g.NamesWithCondtions) == 0 {
+	if len(g.Names)+len(g.NamesWithConditions) == 0 {
 		return nil
 	}
 
