@@ -335,7 +335,7 @@ func TestSimpleConditions(t *testing.T) {
 					{
 						Names:  []string{},
 						Action: ActionKillThread,
-						NamesWithCondtions: []NameWithConditions{
+						NamesWithConditions: []NameWithConditions{
 							{
 								Name: "read",
 								Conditions: []Condition{
@@ -383,7 +383,7 @@ func TestTwoArgumentConditions(t *testing.T) {
 					{
 						Names:  []string{},
 						Action: ActionKillThread,
-						NamesWithCondtions: []NameWithConditions{
+						NamesWithConditions: []NameWithConditions{
 							{
 								Name: "read",
 								Conditions: []Condition{
@@ -454,9 +454,9 @@ func TestLongConditions(t *testing.T) {
 		DefaultAction: ActionAllow,
 		Syscalls: []SyscallGroup{
 			{
-				Names:              []string{},
-				Action:             ActionKillThread,
-				NamesWithCondtions: filter,
+				Names:               []string{},
+				Action:              ActionKillThread,
+				NamesWithConditions: filter,
 			},
 		},
 	}
