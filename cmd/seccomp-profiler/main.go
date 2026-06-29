@@ -191,12 +191,10 @@ func getBinaryArch(binary string) (*arch.Info, string, error) {
 	switch bin.Machine {
 	case elf.EM_386:
 		return arch.I386, "386", nil
-	case elf.EM_ARM:
-		return arch.ARM, "arm", nil
 	case elf.EM_X86_64:
 		return arch.X86_64, "amd64", nil
 	default:
-		return nil, "", fmt.Errorf("%v architecture is not supported by go-seccomp-bpf", bin.Machine)
+		return nil, "", fmt.Errorf("%v architecture is not supported by seccomp-profiler", bin.Machine)
 	}
 }
 
