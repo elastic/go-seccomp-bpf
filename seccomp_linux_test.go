@@ -58,6 +58,20 @@ func TestLoadFilter(t *testing.T) {
 				},
 			},
 		}
+	case "loong64":
+		policy = Policy{
+			DefaultAction: ActionAllow,
+			Syscalls: []SyscallGroup{
+				{
+					Action: ActionErrno,
+					Names: []string{
+						"bind",
+						"listen",
+						"execve",
+					},
+				},
+			},
+		}
 	case "arm64":
 		policy = Policy{
 			DefaultAction: ActionAllow,

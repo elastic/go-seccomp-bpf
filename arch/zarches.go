@@ -29,6 +29,7 @@ const x32SyscallMask = 0x40000000
 type AuditArch uint32
 
 const (
+	auditArchLOONGARCH64 auditArchLOONGARCH64 = 0xc0000102
 	auditArchAARCH64     AuditArch = 0xc00000b7
 	auditArchARM         AuditArch = 0x40000028
 	auditArchARMEB       AuditArch = 0x28
@@ -61,6 +62,7 @@ const (
 )
 
 var auditArchNames = map[AuditArch]string{
+	auditArchLOONGARCH64: "loong64"
 	auditArchAARCH64:     "aarch64",
 	auditArchARM:         "arm",
 	auditArchARMEB:       "armeb",
