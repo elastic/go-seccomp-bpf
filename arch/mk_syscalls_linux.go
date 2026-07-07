@@ -418,6 +418,7 @@ func main() {
 		build386,
 		buildX32,
 		buildX86_64,
+		buildLOONGARCH64,
 	}
 
 	// Build a syscall table for each architecture.
@@ -439,4 +440,51 @@ func main() {
 	if err = tmpl.Execute(out, params); err != nil {
 		log.Fatal(err)
 	}
+}
+
+
+func buildLOONGARCH64(dir string)(*Arch,error){
+	const (
+		headerPath = "/include/uapi/asm-generic/unistd.h"
+		sentinel   = "syscalls"
+	)
+
+	omit := map[string]bool{
+		// sync_file_range2 shares a syscall number with
+		// sync_file_range guarded by __ARCH_WANT_SYNC_FILE_RANGE2.
+		// It is not possible to generate a map with both.
+		"sync_file_range2": true,
+	}
+
+	loong64UnistdSycallRegex := regexp.MustCompile(
+		`^#define __NR(?:3264)?_(?P<syscall>[a-z0-9_]+)\s+(?P<number>\d+)`)
+
+	syscalls, err := readSyscalls(headerPath, dir, func(line string) (*Syscall, error) {
+		matches := loong64UnistdSycallRegex.FindStringSubmatch(line)
+		if len(matches) != 3 || matches[1] == sentinel || omit[matches[1]] {
+			return nil, nil
+		}
+
+		num, err := strconv.Atoi(matches[2])
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse syscall number: %v at '%v'", err, line)
+		}
+
+		return &Syscall{
+			Num:  num,
+			Name: matches[1],
+		}, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	sort.Slice(syscalls, func(i, j int) bool {
+		return syscalls[i].Num < syscalls[j].Num
+	})
+
+	return &Arch{
+		Name:     "LOONGARCH64",
+		Syscalls: syscalls,
+	}, nil
 }

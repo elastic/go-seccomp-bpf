@@ -39,6 +39,7 @@ type AuditArch uint32
 
 // List of architectures constants used by then kernel.
 const (
+	auditArchLOONGARCH64 AuditArch = C.AUDIT_ARCH_LOONGARCH64
 	auditArchAARCH64     AuditArch = C.AUDIT_ARCH_AARCH64
 	auditArchARM         AuditArch = C.AUDIT_ARCH_ARM
 	auditArchARMEB       AuditArch = C.AUDIT_ARCH_ARMEB
@@ -71,6 +72,7 @@ const (
 )
 
 var auditArchNames = map[AuditArch]string{
+	auditArchLOONGARCH64: "loong64",
 	auditArchAARCH64:     "aarch64",
 	auditArchARM:         "arm",
 	auditArchARMEB:       "armeb",
