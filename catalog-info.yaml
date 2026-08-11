@@ -9,6 +9,6 @@ metadata:
 
 spec:
   type: library
-  owner: group:ingest-fp
+  owner: group:Streams
   system: platform-ingest
   lifecycle: production
