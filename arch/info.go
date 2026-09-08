@@ -68,6 +68,12 @@ var (
 		SyscallNumbers: syscallsX86_64,
 		SyscallNames:   invert(syscallsX86_64),
 	}
+	LOONGARCH64 = &Info{
+		Name:           "loong64",
+		ID:             auditArchLOONGARCH64,
+		SyscallNumbers: syscallsLOONGARCH64,
+		SyscallNames:   invert(syscallsLOONGARCH64),
+	}
 
 	// The following architectures are not fully implemented. Syscall tables
 	// need to be added for them (syscall number -> name mapping).
@@ -157,6 +163,8 @@ var arches = map[string]*Info{
 
 	"mipsel64n32": MIPSEL64N32,
 	"mips64p32le": MIPSEL64N32,
+
+	"loong64": LOONGARCH64,
 }
 
 // GetInfo returns the arch Info associated with the given architecture name.

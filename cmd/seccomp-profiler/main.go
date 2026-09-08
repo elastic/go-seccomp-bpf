@@ -195,6 +195,8 @@ func getBinaryArch(binary string) (*arch.Info, string, error) {
 		return arch.ARM, "arm", nil
 	case elf.EM_X86_64:
 		return arch.X86_64, "amd64", nil
+	case elf.EM_LOONGARCH64:
+		return arch.LOONGARCH64, "loong64", nil
 	default:
 		return nil, "", fmt.Errorf("%v architecture is not supported by go-seccomp-bpf", bin.Machine)
 	}
